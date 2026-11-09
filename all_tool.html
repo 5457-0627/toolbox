@@ -1,0 +1,4817 @@
+<!DOCTYPE html>
+<!--
+  轻量工具箱 v10.2 · 多合一在线工具站
+  © 2026 GitHub5457-0627 · 设计与开发 · 保留所有权利
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轻量工具箱 · 多合一在线工具站</title>
+  <meta name="description" content="纯前端在线工具箱：文本统计、Base64、URL 编解码、Markdown、多语言翻译、进制与单位换算、时间戳、颜色、二维码、计算器、数学符号等，数据全部本地处理，即开即用。">
+  <meta name="author" content="GitHub5457-0627">
+  <meta name="copyright" content="© 2026 GitHub5457-0627. All rights reserved.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧰</text></svg>">
+  <script>
+    // 在样式加载前确定主题，避免深色模式下闪白
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('dsh-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+        else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+      } catch (e) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <style>
+    /* ==================== 设计令牌 ==================== */
+    :root {
+      /* 主色 */
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-border: #c7d2fe;
+      --primary-glow: rgba(79, 70, 229, 0.25);
+
+      /* 中性色 */
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #f1f5f9;
+      --border: #e8ecf2;
+      --border-strong: #d8dfe9;
+
+      /* 文本 */
+      --text-primary: #0b1220;
+      --text-secondary: #475569;
+      --text-tertiary: #94a3b8;
+
+      /* 语义色 */
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --warning: #f59e0b;
+
+      /* 圆角 */
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+      --radius-full: 999px;
+
+      /* 阴影 */
+      --shadow-xs: 0 1px 2px rgba(11, 18, 32, 0.04);
+      --shadow-sm: 0 2px 8px -2px rgba(11, 18, 32, 0.06), 0 1px 3px rgba(11, 18, 32, 0.04);
+      --shadow-md: 0 8px 24px -8px rgba(11, 18, 32, 0.12), 0 2px 6px -2px rgba(11, 18, 32, 0.04);
+      --shadow-lg: 0 20px 40px -12px rgba(11, 18, 32, 0.18), 0 4px 12px -4px rgba(11, 18, 32, 0.06);
+      --shadow-glow: 0 0 0 4px var(--primary-glow);
+
+      /* 过渡 */
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: 0.2s var(--ease);
+
+      /* 扩展语义色（供深色模式覆盖） */
+      --navbar-bg: rgba(255, 255, 255, 0.72);
+      --navbar-border: rgba(255, 255, 255, 0.8);
+      --scroll-thumb: #cbd5e1;
+      --scroll-thumb-hover: #94a3b8;
+      --hero-grad-start: #0b1220;
+      --hero-grad-mid: #4338ca;
+      --hero-grad-end: #a855f7;
+      --danger-border: #fecaca;
+      --danger-hover: #fee2e2;
+      --danger-strong: #b91c1c;
+      --success-strong: #047857;
+      --code-color: #be185d;
+      --op-hover: #e0e7ff;
+      --toast-bg: #0b1220;
+      --toast-text: #ffffff;
+    }
+
+    /* ==================== 深色主题 ==================== */
+    html[data-theme="dark"] {
+      color-scheme: dark;
+
+      --primary: #818cf8;
+      --primary-hover: #a5b4fc;
+      --primary-light: rgba(129, 140, 248, 0.14);
+      --primary-border: rgba(129, 140, 248, 0.38);
+      --primary-glow: rgba(129, 140, 248, 0.28);
+
+      --bg: #0b1220;
+      --surface: #111a2b;
+      --surface-2: #0e1626;
+      --surface-3: #172236;
+      --border: #1e2a3f;
+      --border-strong: #2b3a54;
+
+      --text-primary: #e6edf9;
+      --text-secondary: #a7b5ca;
+      --text-tertiary: #71829b;
+
+      --success: #34d399;
+      --success-light: rgba(52, 211, 153, 0.12);
+      --danger: #f87171;
+      --danger-light: rgba(248, 113, 113, 0.12);
+      --warning: #fbbf24;
+
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.6), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.7), 0 4px 12px -4px rgba(0, 0, 0, 0.5);
+
+      --navbar-bg: rgba(17, 26, 43, 0.72);
+      --navbar-border: rgba(255, 255, 255, 0.06);
+      --scroll-thumb: #2b3a54;
+      --scroll-thumb-hover: #3d4f6d;
+      --hero-grad-start: #e6edf9;
+      --hero-grad-mid: #a5b4fc;
+      --hero-grad-end: #e879f9;
+      --danger-border: rgba(248, 113, 113, 0.35);
+      --danger-hover: rgba(248, 113, 113, 0.22);
+      --danger-strong: #fca5a5;
+      --success-strong: #6ee7b7;
+      --code-color: #f9a8d4;
+      --op-hover: rgba(129, 140, 248, 0.22);
+      --toast-bg: #e6edf9;
+      --toast-text: #0b1220;
+    }
+
+    html[data-theme="dark"] body {
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(129, 140, 248, 0.16), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(232, 121, 249, 0.1), transparent);
+    }
+
+    /* 深色模式下浅紫主按钮改用深色文字，保证对比度 */
+    html[data-theme="dark"] .btn:not(.btn-secondary):not(.btn-danger) {
+      color: #0b1220;
+    }
+
+    /* ==================== 全局重置 ==================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(79, 70, 229, 0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(168, 85, 247, 0.06), transparent);
+      background-attachment: fixed;
+      min-height: 100vh;
+      padding: 0 1.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .app {
+      max-width: 1440px;
+      width: 100%;
+    }
+
+    /* ==================== 顶部导航栏 ==================== */
+    .navbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 1rem;
+      background: var(--navbar-bg);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--navbar-border);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px -2px var(--primary-glow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.45rem 0.9rem;
+      border-radius: var(--radius-full);
+      transition: all var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .nav-links a.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    /* ==================== 头部描述 ==================== */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding: 1rem 0;
+    }
+
+    .hero h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--hero-grad-start) 0%, var(--hero-grad-mid) 60%, var(--hero-grad-end) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      margin-top: 0.8rem;
+      font-size: 1.05rem;
+      font-weight: 400;
+    }
+
+    /* ==================== 工具导航 ==================== */
+    .tool-nav {
+      width: 100%;
+      margin-bottom: 2rem;
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      padding: 1.4rem 1.6rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .tool-nav-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .tool-nav-title span {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    .tool-nav-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tool-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.95rem;
+      border-radius: var(--radius-full);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .tool-nav-item:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tool-nav-item .nav-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* ==================== 栏目分类标题 ==================== */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 3rem 0 1.4rem;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      scroll-margin-top: 100px;
+    }
+
+    .section-title .badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    /* ==================== 工具卡片网格 ==================== */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ==================== 卡片 ==================== */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      padding: 1.6rem 1.5rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      scroll-margin-top: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), #a855f7);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-border);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card.highlight {
+      animation: cardHighlight 1.4s var(--ease);
+    }
+
+    @keyframes cardHighlight {
+      0% { box-shadow: 0 0 0 0 var(--primary-glow), var(--shadow-lg); }
+      50% { box-shadow: 0 0 0 8px transparent, var(--shadow-lg); }
+      100% { box-shadow: 0 0 0 0 transparent, var(--shadow-lg); }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-header .icon {
+      font-size: 1.7rem;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-light);
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+
+    .card-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .tool-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    /* ==================== 表单元素 ==================== */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-strong);
+      background: var(--surface);
+      font-size: 0.92rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      width: 100%;
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+
+    .input-group input:hover,
+    .input-group select:hover,
+    .input-group textarea:hover {
+      border-color: #b9c4d4;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .input-group textarea {
+      resize: vertical;
+      min-height: 84px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .convert-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.6rem;
+    }
+
+    .convert-row .input-group {
+      flex: 1;
+    }
+
+    .convert-row .arrow {
+      font-size: 1.1rem;
+      color: var(--text-tertiary);
+      padding-bottom: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* ==================== 按钮 ==================== */
+    .btn {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.2rem;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px -2px var(--primary-glow);
+      letter-spacing: 0.01em;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+      box-shadow: 0 4px 14px -2px var(--primary-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: scale(0.97) translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-strong);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-2);
+      color: var(--text-primary);
+      border-color: #b9c4d4;
+      box-shadow: var(--shadow-xs);
+      transform: translateY(-1px);
+    }
+
+    .btn-small {
+      padding: 0.5rem 0.95rem;
+      font-size: 0.82rem;
+    }
+
+    .btn-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1.5px solid var(--danger-border);
+      box-shadow: none;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-hover);
+      transform: translateY(-1px);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .button-row .btn {
+      flex: 1;
+    }
+
+    /* ==================== 结果区域 ==================== */
+    .result-box {
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      border: 1.5px solid var(--border);
+      word-break: break-word;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .result-box .big-number {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .result-box small {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      margin-left: 0.3rem;
+    }
+
+    .result-box.mono {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      justify-content: flex-start;
+      text-align: left;
+      align-items: flex-start;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .result-box.error {
+      color: var(--danger);
+      background: var(--danger-light);
+      border-color: var(--danger-border);
+    }
+
+    .input-group input.error,
+    .input-group textarea.error {
+      border-color: var(--danger);
+    }
+
+    .input-group input.error:focus,
+    .input-group textarea.error:focus {
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.18);
+    }
+
+    /* ==================== 进制转换 ==================== */
+    .base-convert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .base-convert-grid .result-box {
+      min-height: 62px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1rem;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.7rem 0.9rem;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .base-label {
+      font-size: 0.68rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .base-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      word-break: break-all;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .base-value.error {
+      color: var(--danger);
+      font-size: 0.82rem;
+    }
+
+    /* ==================== 单位换算分类标签 ==================== */
+    .unit-category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .unit-category-tabs button {
+      flex: 1;
+      min-width: 60px;
+      padding: 0.45rem 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .unit-category-tabs button.active {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 2px 8px -2px var(--primary-glow);
+    }
+
+    .unit-category-tabs button:hover:not(.active) {
+      background: var(--surface-3);
+      border-color: #b9c4d4;
+      color: var(--text-primary);
+    }
+
+    /* ==================== 翻译模块 ==================== */
+    .translate-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.6rem;
+    }
+
+    .translate-row .input-group {
+      flex: 1;
+    }
+
+    .translate-result {
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      border: 1.5px solid var(--border);
+      min-height: 84px;
+      word-break: break-word;
+      color: var(--text-primary);
+    }
+
+    .translate-result.loading {
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+
+    /* ==================== 颜色预览 ==================== */
+    .color-preview {
+      width: 100%;
+      height: 64px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      margin-top: 0.3rem;
+      transition: background 0.15s;
+    }
+
+    .color-code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: var(--surface-3);
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      display: inline-block;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1px solid transparent;
+      font-weight: 500;
+    }
+
+    .color-code:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+
+    /* ==================== 统计网格 ==================== */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 0.9rem;
+      border: 1px solid var(--border);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 0.3rem 0;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-top: 0.15rem;
+    }
+
+    /* ==================== 二维码 ==================== */
+    .qrcode-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-lg);
+      min-height: 168px;
+      border: 1px solid var(--border);
+    }
+
+    #qrcodeCanvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==================== 调色板 ==================== */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.5rem;
+    }
+
+    .palette-swatch {
+      aspect-ratio: 1/1;
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s var(--ease);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .palette-swatch:hover {
+      transform: scale(1.12);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ==================== 文本对比 ==================== */
+    .diff-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .diff-container textarea {
+      min-height: 100px;
+      font-size: 0.85rem;
+    }
+
+    .diff-result {
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 0.9rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.83rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1.5px solid var(--border);
+      line-height: 1.7;
+    }
+
+    .diff-added {
+      background: var(--success-light);
+      color: var(--success-strong);
+      display: block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      border-left: 3px solid var(--success);
+      margin: 1px 0;
+    }
+
+    .diff-removed {
+      background: var(--danger-light);
+      color: var(--danger-strong);
+      text-decoration: line-through;
+      display: block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      border-left: 3px solid var(--danger);
+      margin: 1px 0;
+    }
+
+    .diff-same {
+      display: block;
+      color: var(--text-secondary);
+      padding: 0.15rem 0.4rem;
+      margin: 1px 0;
+    }
+
+    /* ==================== Markdown 预览 ==================== */
+    .md-preview {
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      border: 1.5px solid var(--border);
+      max-height: 200px;
+      overflow-y: auto;
+      word-break: break-word;
+    }
+
+    .md-preview h1, .md-preview h2, .md-preview h3 {
+      margin: 0.5rem 0 0.3rem;
+      font-weight: 700;
+    }
+
+    .md-preview h1 { font-size: 1.3rem; }
+    .md-preview h2 { font-size: 1.15rem; }
+    .md-preview h3 { font-size: 1.02rem; }
+
+    .md-preview code {
+      background: var(--surface-3);
+      padding: 0.12rem 0.4rem;
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85em;
+      color: var(--code-color);
+    }
+
+    .md-preview ul {
+      padding-left: 1.3rem;
+      margin: 0.4rem 0;
+    }
+
+    /* ==================== CSS 渐变预览 ==================== */
+    .gradient-preview {
+      width: 100%;
+      height: 88px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      background: linear-gradient(90deg, #4f46e5, #a855f7);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* ==================== 计算器 ==================== */
+    .calculator-wrapper {
+      max-width: 100%;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .calc-card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      padding: 1.6rem 1.5rem;
+      border: 1px solid var(--border);
+      scroll-margin-top: 100px;
+    }
+
+    .history-card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem 1.3rem;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      max-height: 720px;
+      scroll-margin-top: 100px;
+    }
+
+    .calc-display-wrapper {
+      background: linear-gradient(135deg, #0b1220, #1e1b4b);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      color: white;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .calc-expression {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      color: #a5b4fc;
+      text-align: right;
+      min-height: 22px;
+      word-break: break-all;
+      line-height: 1.4;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .calc-main {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 2.1rem;
+      font-weight: 700;
+      text-align: right;
+      word-break: break-all;
+      line-height: 1.2;
+      color: white;
+      margin-top: 0.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .calc-memory-indicator {
+      font-size: 0.7rem;
+      color: #67e8f9;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .memory-bar {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .memory-bar button {
+      flex: 1;
+      padding: 0.45rem 0.2rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .memory-bar button:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+
+    .mode-toggle {
+      display: flex;
+      gap: 0.3rem;
+      margin-bottom: 0.8rem;
+      background: var(--surface-3);
+      border-radius: var(--radius-full);
+      padding: 0.25rem;
+    }
+
+    .mode-toggle button {
+      flex: 1;
+      padding: 0.45rem;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-tertiary);
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .mode-toggle button.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .calc-keys {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.45rem;
+    }
+
+    .calc-keys button {
+      padding: 0.75rem 0.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.12s var(--ease);
+      user-select: none;
+      font-family: inherit;
+    }
+
+    .calc-keys button:hover {
+      background: var(--surface-2);
+      border-color: var(--border-strong);
+    }
+
+    .calc-keys button:active {
+      transform: scale(0.94);
+    }
+
+    .calc-keys .key-fn {
+      background: var(--surface-2);
+      color: var(--primary);
+      font-size: 0.82rem;
+    }
+
+    .calc-keys .key-fn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+    }
+
+    .calc-keys .key-op {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+      font-weight: 700;
+    }
+
+    .calc-keys .key-op:hover {
+      background: var(--op-hover);
+    }
+
+    .calc-keys .key-equal {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: white;
+      border-color: transparent;
+      font-weight: 700;
+      box-shadow: 0 2px 8px -2px var(--primary-glow);
+    }
+
+    .calc-keys .key-equal:hover {
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+    }
+
+    .calc-keys .key-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    .calc-keys .key-danger:hover {
+      background: var(--danger-hover);
+    }
+
+    .calc-keys .key-zero {
+      grid-column: span 2;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.7rem;
+    }
+
+    .history-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .history-header button {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .history-header button:hover {
+      color: var(--danger);
+      background: var(--danger-light);
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      max-height: 580px;
+      padding-right: 0.2rem;
+    }
+
+    .history-item {
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 0.6rem 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1px solid var(--border);
+    }
+
+    .history-item:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      transform: translateX(3px);
+    }
+
+    .history-item .h-expr {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-family: 'SF Mono', monospace;
+      word-break: break-all;
+      margin-bottom: 0.15rem;
+    }
+
+    .history-item .h-result {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'SF Mono', monospace;
+      text-align: right;
+    }
+
+    .history-empty {
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      padding: 2rem 0;
+    }
+
+    /* ==================== 页脚 ==================== */
+    .footer {
+      margin-top: 4rem;
+      padding: 2rem 0 0.5rem;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .footer-copyright {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      width: fit-content;
+      padding: 0.34rem 0.8rem;
+      border-radius: var(--radius-full);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.76rem;
+      color: var(--text-tertiary);
+      letter-spacing: 0.01em;
+    }
+
+    .footer-copyright strong {
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-links a {
+      color: var(--text-tertiary);
+      text-decoration: none;
+      padding: 0.3rem 0.7rem;
+      border-radius: var(--radius-full);
+      transition: all var(--transition);
+      font-weight: 500;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* ==================== Toast ==================== */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 0.8rem 1.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+      z-index: 999;
+      box-shadow: var(--shadow-lg);
+      letter-spacing: 0.01em;
+      max-width: min(92vw, 560px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    html[data-theme="dark"] .toast.error {
+      color: #1a0a0a;
+    }
+
+    /* ==================== 滚动条美化 ==================== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--scroll-thumb);
+      border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--scroll-thumb-hover);
+    }
+
+    /* ==================== 主题切换 ==================== */
+    .theme-toggle {
+      margin-left: 0.25rem;
+      width: 38px;
+      height: 38px;
+      flex: none;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .theme-toggle:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      transform: rotate(-12deg);
+    }
+
+    .theme-toggle:active {
+      transform: scale(0.92);
+    }
+
+    /* ==================== 工具搜索 ==================== */
+    .tool-search {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 0.9rem;
+    }
+
+    .tool-search-icon {
+      position: absolute;
+      left: 0.95rem;
+      font-size: 0.95rem;
+      line-height: 1;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .tool-search input {
+      flex: 1;
+      min-width: 0;
+      padding: 0.7rem 1rem 0.7rem 2.6rem;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-strong);
+      background: var(--surface-2);
+      color: var(--text-primary);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    .tool-search input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .tool-search input:focus {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      background: var(--surface);
+    }
+
+    .tool-search-count {
+      flex: none;
+      padding-right: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    .tool-nav-empty {
+      padding: 0.4rem 0.2rem 0.2rem;
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+    }
+
+    /* ==================== 返回顶部 ==================== */
+    .back-to-top {
+      position: fixed;
+      right: 1.4rem;
+      bottom: 1.4rem;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity 0.25s var(--ease), transform 0.25s var(--ease), visibility 0.25s;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      color: var(--primary);
+      border-color: var(--primary-border);
+      background: var(--primary-light);
+    }
+
+    /* ==================== 焦点可见性 ==================== */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    .palette-swatch:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* ==================== 无 JS 提示 ==================== */
+    .noscript {
+      margin: 1rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      background: var(--danger-light);
+      color: var(--danger);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* ==================== 文本对比（行号） ==================== */
+    .diff-line {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+
+    .diff-line .diff-no {
+      flex: none;
+      min-width: 2.6em;
+      text-align: right;
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      user-select: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .diff-line .diff-text {
+      flex: 1;
+      min-width: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ==================== Markdown 扩展 ==================== */
+    .md-preview p {
+      margin: 0.45rem 0;
+    }
+
+    .md-preview h4,
+    .md-preview h5,
+    .md-preview h6 {
+      margin: 0.5rem 0 0.3rem;
+      font-weight: 700;
+    }
+
+    .md-preview h4 { font-size: 0.95rem; }
+    .md-preview h5 { font-size: 0.9rem; }
+    .md-preview h6 { font-size: 0.85rem; color: var(--text-secondary); }
+
+    .md-preview pre {
+      margin: 0.6rem 0;
+      padding: 0.75rem 0.9rem;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .md-preview pre code {
+      padding: 0;
+      background: none;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .md-preview blockquote {
+      margin: 0.6rem 0;
+      padding: 0.35rem 0.9rem;
+      border-left: 3px solid var(--primary-border);
+      border-radius: 0 8px 8px 0;
+      background: var(--surface-3);
+      color: var(--text-secondary);
+    }
+
+    .md-preview a {
+      color: var(--primary);
+      text-underline-offset: 2px;
+    }
+
+    .md-preview ul,
+    .md-preview ol {
+      padding-left: 1.3rem;
+      margin: 0.4rem 0;
+    }
+
+    .md-preview li {
+      margin: 0.15rem 0;
+    }
+
+    .md-preview hr {
+      margin: 0.9rem 0;
+      border: none;
+      border-top: 1px solid var(--border-strong);
+    }
+
+    .md-preview table {
+      margin: 0.6rem 0;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .md-preview th,
+    .md-preview td {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--border-strong);
+      text-align: left;
+    }
+
+    .md-preview th {
+      background: var(--surface-3);
+    }
+
+    .md-preview del {
+      color: var(--text-tertiary);
+    }
+
+    .md-preview .md-empty {
+      color: var(--text-tertiary);
+    }
+
+    /* ==================== 无障碍：减少动效 ==================== */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ==================== 数学符号 ==================== */
+    .sym-toolbar {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .sym-toolbar .input-group {
+      flex: 1 1 240px;
+    }
+
+    .sym-mode {
+      display: flex;
+      gap: 0.3rem;
+      background: var(--surface-3);
+      padding: 0.25rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+    }
+
+    .sym-mode button {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .sym-mode button.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .sym-mode button:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .sym-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+      gap: 0.4rem;
+      max-height: 252px;
+      overflow-y: auto;
+      padding: 0.6rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .sym-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0.2rem;
+      font-size: 1.3rem;
+      line-height: 1;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s var(--ease);
+      font-family: 'Cambria Math', 'Segoe UI Symbol', 'Segoe UI', serif;
+    }
+
+    .sym-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sym-btn:active {
+      transform: scale(0.93);
+    }
+
+    .sym-btn.copied {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: var(--success);
+      transform: scale(1.04);
+    }
+
+    .sym-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      padding: 1.4rem 0;
+    }
+
+    .input-group textarea.sym-compose {
+      min-height: 78px;
+      font-family: 'Cambria Math', 'Segoe UI Symbol', 'Segoe UI', serif;
+      font-size: 1.18rem;
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+    }
+
+    .sym-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      min-height: 1.4rem;
+      font-size: 0.78rem;
+      color: var(--text-tertiary);
+      line-height: 1.6;
+    }
+
+    .sym-hint strong {
+      color: var(--primary);
+      font-size: 1.05rem;
+      vertical-align: middle;
+    }
+
+    .sym-hint code {
+      background: var(--surface-3);
+      padding: 0.1rem 0.42rem;
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      .sym-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sym-grid {
+        grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+        max-height: 220px;
+      }
+      .sym-btn {
+        min-height: 42px;
+        font-size: 1.15rem;
+      }
+    }
+
+    /* ==================== 响应式 ==================== */
+    @media (max-width: 900px) {
+      .calculator-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .history-card {
+        max-height: 380px;
+      }
+      .history-list {
+        max-height: 280px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0 1rem 2rem;
+      }
+      .back-to-top {
+        right: 0.9rem;
+        bottom: 0.9rem;
+        width: 40px;
+        height: 40px;
+      }
+      .theme-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 34px;
+        height: 34px;
+        margin: 0;
+      }
+      .nav-links a {
+        flex: none;
+        padding: 0.4rem 0.62rem;
+        font-size: 0.82rem;
+      }
+      .tool-search {
+        margin-bottom: 0.7rem;
+      }
+      .navbar {
+        top: 0.5rem;
+        padding: 0.8rem 1rem;
+        border-radius: var(--radius-lg);
+      }
+      .hero h1 {
+        font-size: 1.9rem;
+      }
+      .hero p {
+        font-size: 0.92rem;
+      }
+      .card {
+        padding: 1.4rem 1.2rem;
+      }
+      .convert-row, .translate-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .convert-row .arrow {
+        text-align: center;
+        padding: 0;
+        transform: rotate(90deg);
+      }
+      .button-row {
+        flex-direction: column;
+      }
+      .diff-container {
+        grid-template-columns: 1fr;
+      }
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .palette-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .calc-keys button {
+        padding: 0.65rem 0.1rem;
+        font-size: 0.85rem;
+      }
+      .calc-main {
+        font-size: 1.7rem;
+      }
+      .tool-nav-grid {
+        gap: 0.4rem;
+      }
+      .tool-nav-item {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.78rem;
+      }
+      .base-convert-grid {
+        grid-template-columns: 1fr;
+      }
+      .unit-category-tabs button {
+        min-width: 50px;
+        font-size: 0.72rem;
+        padding: 0.4rem 0.5rem;
+      }
+      .section-title {
+        font-size: 1.2rem;
+        margin: 2rem 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- ===== 导航栏 ===== -->
+    <nav class="navbar">
+      <div class="logo">
+        🧰 轻量工具箱 <span>v10.2</span>
+      </div>
+      <div class="nav-links">
+        <a href="#tool-nav">导航</a>
+        <a href="#text-tools">文本</a>
+        <a href="#translate-tools">翻译</a>
+        <a href="#convert-tools">转换</a>
+        <a href="#generate-tools">生成</a>
+        <a href="#dev-tools">开发</a>
+        <a href="#math-tools">数学</a>
+      </div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="切换深色模式" title="切换深色 / 浅色主题">🌙</button>
+    </nav>
+
+    <!-- ===== 头部描述 ===== -->
+    <div class="hero">
+      <h1><span id="toolCount">24</span> 合一 · 在线工具箱</h1>
+      <p>即开即用 · 无需登录 · 数据本地处理 · 多语言翻译 · 进制与单位换算 · 专业计算器 · 数学符号一键复制</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 工具导航 -->
+    <!-- ============================================================ -->
+    <div class="tool-nav" id="tool-nav">
+      <div class="tool-nav-title">
+        🔍 快速导航 <span>点击直达</span>
+      </div>
+      <div class="tool-search">
+        <span class="tool-search-icon" aria-hidden="true">🔎</span>
+        <input type="search" id="toolSearch" placeholder="搜索工具，例如：时间戳、Base64、颜色、符号…" aria-label="搜索工具" autocomplete="off" spellcheck="false">
+        <span class="tool-search-count" id="toolSearchCount" aria-live="polite"></span>
+      </div>
+      <div class="tool-nav-empty" id="toolNavEmpty" hidden>没有找到匹配的工具，换个关键词试试</div>
+      <div class="tool-nav-grid">
+        <a class="tool-nav-item" href="#tool-text-stats"><span class="nav-icon">📊</span>文本统计</a>
+        <a class="tool-nav-item" href="#tool-base64"><span class="nav-icon">🔐</span>Base64</a>
+        <a class="tool-nav-item" href="#tool-url"><span class="nav-icon">🔗</span>URL编解码</a>
+        <a class="tool-nav-item" href="#tool-markdown"><span class="nav-icon">📄</span>Markdown</a>
+        <a class="tool-nav-item" href="#tool-translate"><span class="nav-icon">🌐</span>多语言翻译</a>
+        <a class="tool-nav-item" href="#tool-length"><span class="nav-icon">📏</span>长度换算</a>
+        <a class="tool-nav-item" href="#tool-weight"><span class="nav-icon">⚖️</span>重量/温度</a>
+        <a class="tool-nav-item" href="#tool-base-convert"><span class="nav-icon">🔢</span>进制转换</a>
+        <a class="tool-nav-item" href="#tool-unit-convert"><span class="nav-icon">📐</span>常用单位</a>
+        <a class="tool-nav-item" href="#tool-timestamp"><span class="nav-icon">⏱️</span>时间戳</a>
+        <a class="tool-nav-item" href="#tool-color"><span class="nav-icon">🎨</span>颜色转换</a>
+        <a class="tool-nav-item" href="#tool-palette"><span class="nav-icon">🖌️</span>调色板</a>
+        <a class="tool-nav-item" href="#tool-html"><span class="nav-icon">🔣</span>HTML实体</a>
+        <a class="tool-nav-item" href="#tool-password"><span class="nav-icon">🔑</span>密码生成</a>
+        <a class="tool-nav-item" href="#tool-qrcode"><span class="nav-icon">📱</span>二维码</a>
+        <a class="tool-nav-item" href="#tool-random"><span class="nav-icon">🎲</span>随机数</a>
+        <a class="tool-nav-item" href="#tool-uuid"><span class="nav-icon">🆔</span>UUID</a>
+        <a class="tool-nav-item" href="#tool-json"><span class="nav-icon">📋</span>JSON格式化</a>
+        <a class="tool-nav-item" href="#tool-regex"><span class="nav-icon">🔍</span>正则测试</a>
+        <a class="tool-nav-item" href="#tool-diff"><span class="nav-icon">📑</span>文本对比</a>
+        <a class="tool-nav-item" href="#tool-gradient"><span class="nav-icon">🌈</span>CSS渐变</a>
+        <a class="tool-nav-item" href="#tool-percent"><span class="nav-icon">💯</span>百分比</a>
+        <a class="tool-nav-item" href="#tool-calculator"><span class="nav-icon">🧮</span>计算器</a>
+        <a class="tool-nav-item" href="#tool-symbols"><span class="nav-icon">∑</span>数学符号</a>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 1：文本工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="text-tools">
+      📝 文本工具 <span class="badge">4 个工具</span>
+    </div>
+    <div class="tool-grid">
+      <div class="card" id="tool-text-stats">
+        <div class="card-header"><div class="icon">📊</div><h2>文本统计</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入文本</label><textarea id="textInput" placeholder="在此输入或粘贴文本..."></textarea></div>
+          <div class="stat-grid">
+            <div class="stat-item"><div class="stat-value" id="charCount">0</div><div class="stat-label">字符数</div></div>
+            <div class="stat-item"><div class="stat-value" id="wordCount">0</div><div class="stat-label">词数</div></div>
+            <div class="stat-item"><div class="stat-value" id="sentenceCount">0</div><div class="stat-label">句子</div></div>
+            <div class="stat-item"><div class="stat-value" id="lineCount">0</div><div class="stat-label">行数</div></div>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-secondary" id="clearTextBtn">清空</button>
+            <button class="btn btn-secondary" id="copyTextStatsBtn">复制统计</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-base64">
+        <div class="card-header"><div class="icon">🔐</div><h2>Base64 编解码</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入文本</label><textarea id="base64Input" placeholder="输入要编码或解码的内容..."></textarea></div>
+          <div class="button-row">
+            <button class="btn" id="base64EncodeBtn">编码</button>
+            <button class="btn btn-secondary" id="base64DecodeBtn">解码</button>
+          </div>
+          <div class="result-box mono" id="base64Result">结果将显示在这里</div>
+          <button class="btn btn-secondary btn-small" id="copyBase64Btn">复制结果</button>
+        </div>
+      </div>
+
+      <div class="card" id="tool-url">
+        <div class="card-header"><div class="icon">🔗</div><h2>URL 编解码</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入 URL 或文本</label><textarea id="urlInput" placeholder="输入要编码/解码的URL或文本..."></textarea></div>
+          <div class="button-row">
+            <button class="btn" id="urlEncodeBtn">编码</button>
+            <button class="btn btn-secondary" id="urlDecodeBtn">解码</button>
+          </div>
+          <div class="result-box mono" id="urlResult">结果将显示在这里</div>
+          <button class="btn btn-secondary btn-small" id="copyUrlBtn">复制结果</button>
+        </div>
+      </div>
+
+      <div class="card" id="tool-markdown">
+        <div class="card-header"><div class="icon">📄</div><h2>Markdown 预览</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入 Markdown</label><textarea id="mdInput" placeholder="# 标题&#10;**粗体** 或 *斜体*&#10;`代码`&#10;- 列表项"># 示例标题
+**粗体** 和 *斜体* 以及 `代码`
+- 列表项1
+- 列表项2</textarea></div>
+          <div class="md-preview" id="mdPreview"></div>
+          <button class="btn btn-secondary btn-small" id="copyMdBtn">复制 Markdown</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 2：翻译工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="translate-tools">
+      🌐 翻译工具 <span class="badge">1 个工具</span>
+    </div>
+    <div class="tool-grid">
+      <div class="card" id="tool-translate" style="grid-column: 1 / -1; max-width: 820px; margin: 0 auto; width: 100%;">
+        <div class="card-header"><div class="icon">🌐</div><h2>多语言翻译</h2></div>
+        <div class="tool-body">
+          <div class="translate-row">
+            <div class="input-group"><label>源语言</label><select id="transFrom">
+              <option value="auto" selected>自动检测</option>
+              <option value="zh-CN">中文</option>
+              <option value="en">英语</option>
+              <option value="ja">日语</option>
+              <option value="ko">韩语</option>
+              <option value="fr">法语</option>
+              <option value="de">德语</option>
+              <option value="es">西班牙语</option>
+              <option value="ru">俄语</option>
+            </select></div>
+            <div class="arrow">→</div>
+            <div class="input-group"><label>目标语言</label><select id="transTo">
+              <option value="zh-CN">中文</option>
+              <option value="en" selected>英语</option>
+              <option value="ja">日语</option>
+              <option value="ko">韩语</option>
+              <option value="fr">法语</option>
+              <option value="de">德语</option>
+              <option value="es">西班牙语</option>
+              <option value="ru">俄语</option>
+            </select></div>
+          </div>
+          <div class="input-group"><label>输入要翻译的文本</label><textarea id="transInput" placeholder="输入要翻译的文本..." style="min-height:100px;"></textarea></div>
+          <div class="button-row">
+            <button class="btn" id="translateBtn">翻译</button>
+            <button class="btn btn-secondary" id="swapLangBtn">⇄ 交换语言</button>
+          </div>
+          <div class="translate-result" id="transResult">翻译结果将显示在这里</div>
+          <button class="btn btn-secondary btn-small" id="copyTransBtn">复制译文</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 3：转换工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="convert-tools">
+      🔄 转换工具 <span class="badge">8 个工具</span>
+    </div>
+    <div class="tool-grid">
+      <div class="card" id="tool-length">
+        <div class="card-header"><div class="icon">📏</div><h2>长度换算</h2></div>
+        <div class="tool-body">
+          <div class="convert-row">
+            <div class="input-group"><label>数值</label><input type="number" id="lengthInput" value="1" step="any"></div>
+            <div class="arrow">→</div>
+            <div class="input-group"><label>从</label><select id="lengthFrom"><option value="m" selected>米 (m)</option><option value="km">千米 (km)</option><option value="cm">厘米 (cm)</option><option value="mm">毫米 (mm)</option><option value="inch">英寸 (inch)</option><option value="foot">英尺 (ft)</option></select></div>
+            <div class="input-group"><label>到</label><select id="lengthTo"><option value="km">千米 (km)</option><option value="m" selected>米 (m)</option><option value="cm">厘米 (cm)</option><option value="mm">毫米 (mm)</option><option value="inch">英寸 (inch)</option><option value="foot">英尺 (ft)</option></select></div>
+          </div>
+          <div class="result-box" id="lengthResult"><span class="big-number">1</span> <small>米 (m)</small></div>
+          <button class="btn btn-secondary btn-small" id="copyLengthBtn">复制结果</button>
+        </div>
+      </div>
+
+      <div class="card" id="tool-weight">
+        <div class="card-header"><div class="icon">⚖️</div><h2>重量/温度换算</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>换算类型</label><select id="unitType"><option value="weight">重量</option><option value="temp">温度</option></select></div>
+          <div class="convert-row">
+            <div class="input-group"><label>数值</label><input type="number" id="unitInput" value="1" step="any"></div>
+            <div class="arrow">→</div>
+            <div class="input-group"><label>从</label><select id="unitFrom"></select></div>
+            <div class="input-group"><label>到</label><select id="unitTo"></select></div>
+          </div>
+          <div class="result-box" id="unitResult"><span class="big-number">1</span> <small>千克 (kg)</small></div>
+          <button class="btn btn-secondary btn-small" id="copyUnitBtn">复制结果</button>
+        </div>
+      </div>
+
+      <!-- 进制转换 -->
+      <div class="card" id="tool-base-convert">
+        <div class="card-header"><div class="icon">🔢</div><h2>进制转换</h2></div>
+        <div class="tool-body">
+          <div class="convert-row">
+            <div class="input-group">
+              <label>输入数值</label>
+              <input type="text" id="baseInput" value="255" placeholder="输入数值">
+            </div>
+            <div class="input-group" style="max-width:110px;">
+              <label>输入进制</label>
+              <select id="baseFrom">
+                <option value="2">二进制</option>
+                <option value="8">八进制</option>
+                <option value="10" selected>十进制</option>
+                <option value="16">十六进制</option>
+              </select>
+            </div>
+          </div>
+          <div class="base-convert-grid">
+            <div class="result-box">
+              <span class="base-label">二进制 (BIN)</span>
+              <span class="base-value" id="baseBin">11111111</span>
+            </div>
+            <div class="result-box">
+              <span class="base-label">八进制 (OCT)</span>
+              <span class="base-value" id="baseOct">377</span>
+            </div>
+            <div class="result-box">
+              <span class="base-label">十进制 (DEC)</span>
+              <span class="base-value" id="baseDec">255</span>
+            </div>
+            <div class="result-box">
+              <span class="base-label">十六进制 (HEX)</span>
+              <span class="base-value" id="baseHex">FF</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-small" id="copyBaseConvertBtn">复制所有结果</button>
+        </div>
+      </div>
+
+      <!-- 常用单位换算 -->
+      <div class="card" id="tool-unit-convert">
+        <div class="card-header"><div class="icon">📐</div><h2>常用单位换算</h2></div>
+        <div class="tool-body">
+          <div class="unit-category-tabs" id="unitCategoryTabs">
+            <button data-cat="length" class="active">长度</button>
+            <button data-cat="weight">重量</button>
+            <button data-cat="area">面积</button>
+            <button data-cat="volume">体积</button>
+            <button data-cat="speed">速度</button>
+            <button data-cat="data">数据</button>
+          </div>
+          <div class="convert-row">
+            <div class="input-group">
+              <label>数值</label>
+              <input type="number" id="generalUnitInput" value="1" step="any">
+            </div>
+            <div class="arrow">→</div>
+            <div class="input-group">
+              <label>从</label>
+              <select id="generalUnitFrom"></select>
+            </div>
+            <div class="input-group">
+              <label>到</label>
+              <select id="generalUnitTo"></select>
+            </div>
+          </div>
+          <div class="result-box" id="generalUnitResult"><span class="big-number">1</span> <small>米 (m)</small></div>
+          <button class="btn btn-secondary btn-small" id="copyGeneralUnitBtn">复制结果</button>
+        </div>
+      </div>
+
+      <div class="card" id="tool-timestamp">
+        <div class="card-header"><div class="icon">⏱️</div><h2>时间戳转换</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>Unix 时间戳（秒或毫秒，自动识别）</label><input type="number" id="timestampInput" placeholder="例如: 1700000000 或 1700000000000" step="1"></div>
+          <div class="button-row">
+            <button class="btn" id="timestampToDateBtn">转为日期</button>
+            <button class="btn btn-secondary" id="nowTimestampBtn">现在</button>
+          </div>
+          <div class="result-box" id="timestampResult" style="font-size:1rem; min-height:72px;">等待转换</div>
+          <div class="input-group" style="margin-top:0.2rem;"><label>日期时间 → 时间戳</label><input type="datetime-local" id="dateTimeInput" step="1"></div>
+          <button class="btn btn-secondary" id="dateToTimestampBtn">日期转为时间戳</button>
+          <button class="btn btn-secondary btn-small" id="copyTimestampBtn">复制结果</button>
+        </div>
+      </div>
+
+      <div class="card" id="tool-color">
+        <div class="card-header"><div class="icon">🎨</div><h2>颜色转换</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>选择颜色</label><input type="color" id="colorPicker" value="#4f46e5" style="height:56px; padding:0.2rem; cursor:pointer;"></div>
+          <div class="input-group"><label>HEX 色值（可直接输入）</label><input type="text" id="hexInput" value="#4F46E5" spellcheck="false" autocomplete="off" maxlength="7" placeholder="#4F46E5"></div>
+          <div class="color-preview" id="colorPreview" style="background:#4f46e5;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="color-code" id="hexCode">#4F46E5</span>
+            <span class="color-code" id="rgbCode">rgb(79, 70, 229)</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="color-code" id="hslCode">hsl(243, 75%, 59%)</span>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-small" id="copyHexBtn">复制 HEX</button>
+            <button class="btn btn-secondary btn-small" id="copyRgbBtn">复制 RGB</button>
+            <button class="btn btn-secondary btn-small" id="copyHslBtn">复制 HSL</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-palette">
+        <div class="card-header"><div class="icon">🖌️</div><h2>调色板</h2></div>
+        <div class="tool-body">
+          <div class="palette-grid" id="paletteGrid"></div>
+          <div class="result-box" id="paletteResult" style="min-height:54px; font-size:0.95rem;">点击色块复制色值</div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-html">
+        <div class="card-header"><div class="icon">🔣</div><h2>HTML 实体编解码</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入文本</label><textarea id="htmlInput" placeholder="输入要编码/解码的 HTML 或文本..."></textarea></div>
+          <div class="button-row">
+            <button class="btn" id="htmlEncodeBtn">编码</button>
+            <button class="btn btn-secondary" id="htmlDecodeBtn">解码</button>
+          </div>
+          <div class="result-box mono" id="htmlResult">结果将显示在这里</div>
+          <button class="btn btn-secondary btn-small" id="copyHtmlBtn">复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 4：生成工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="generate-tools">
+      ⚡ 生成工具 <span class="badge">4 个工具</span>
+    </div>
+    <div class="tool-grid">
+      <div class="card" id="tool-password">
+        <div class="card-header"><div class="icon">🔑</div><h2>密码生成器</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>密码长度</label><input type="number" id="pwdLength" value="16" min="4" max="64" step="1"></div>
+          <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+            <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; color:var(--text-secondary); font-weight:500;"><input type="checkbox" id="pwdUpper" checked> 大写</label>
+            <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; color:var(--text-secondary); font-weight:500;"><input type="checkbox" id="pwdLower" checked> 小写</label>
+            <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; color:var(--text-secondary); font-weight:500;"><input type="checkbox" id="pwdNumber" checked> 数字</label>
+            <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; color:var(--text-secondary); font-weight:500;"><input type="checkbox" id="pwdSymbol" checked> 符号</label>
+          </div>
+          <button class="btn" id="generatePwdBtn">生成密码</button>
+          <div class="result-box" id="pwdResult" style="font-size:1.05rem; font-family:monospace; min-height:64px;">点击生成</div>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-small" id="copyPwdBtn">复制密码</button>
+            <button class="btn btn-secondary btn-small" id="regenPwdBtn">重新生成</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-qrcode">
+        <div class="card-header"><div class="icon">📱</div><h2>二维码生成</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入内容 (网址/文本)</label><input type="text" id="qrcodeInput" value="https://www.example.com" placeholder="输入网址或任意文本"></div>
+          <button class="btn" id="generateQrBtn">生成二维码</button>
+          <div class="qrcode-container"><canvas id="qrcodeCanvas"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-random">
+        <div class="card-header"><div class="icon">🎲</div><h2>随机数生成器</h2></div>
+        <div class="tool-body">
+          <div class="convert-row">
+            <div class="input-group"><label>最小值</label><input type="number" id="randMin" value="1"></div>
+            <div class="input-group"><label>最大值</label><input type="number" id="randMax" value="100"></div>
+          </div>
+          <div class="input-group"><label>生成数量 (1-20)</label><input type="number" id="randCount" value="1" min="1" max="20" step="1"></div>
+          <button class="btn" id="generateRandBtn">生成随机数</button>
+          <div class="result-box" id="randResult"><span class="big-number">?</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-uuid">
+        <div class="card-header"><div class="icon">🆔</div><h2>UUID 生成器</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>生成数量 (1-10)</label><input type="number" id="uuidCount" value="1" min="1" max="10" step="1"></div>
+          <button class="btn" id="generateUuidBtn">生成 UUID</button>
+          <div class="result-box mono" id="uuidResult" style="min-height:72px; font-size:0.88rem;">点击生成</div>
+          <button class="btn btn-secondary btn-small" id="copyUuidBtn">复制全部</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 5：开发工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="dev-tools">
+      🛠️ 开发工具 <span class="badge">4 个工具</span>
+    </div>
+    <div class="tool-grid">
+      <div class="card" id="tool-json">
+        <div class="card-header"><div class="icon">📋</div><h2>JSON 格式化</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>输入 JSON</label><textarea id="jsonInput" placeholder='{"name":"test","value":1}'></textarea></div>
+          <div class="button-row">
+            <button class="btn" id="jsonFormatBtn">格式化</button>
+            <button class="btn btn-secondary" id="jsonMinifyBtn">压缩</button>
+          </div>
+          <div class="result-box mono" id="jsonResult">结果将显示在这里</div>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-small" id="copyJsonBtn">复制结果</button>
+            <button class="btn btn-secondary btn-small" id="validateJsonBtn">校验 JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-regex">
+        <div class="card-header"><div class="icon">🔍</div><h2>正则表达式测试</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>正则表达式</label><input type="text" id="regexPattern" placeholder="例如: \\d+" value="\\d+"></div>
+          <div class="input-group"><label>标志 (g, i, m)</label><input type="text" id="regexFlags" placeholder="g" value="g"></div>
+          <div class="input-group"><label>测试文本</label><textarea id="regexText" placeholder="输入要测试的文本...">Hello 123 World 456</textarea></div>
+          <button class="btn" id="testRegexBtn">测试</button>
+          <div class="result-box mono" id="regexResult">等待测试</div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-diff">
+        <div class="card-header"><div class="icon">📑</div><h2>文本对比</h2></div>
+        <div class="tool-body">
+          <div class="diff-container">
+            <div class="input-group"><label>原始文本</label><textarea id="diffLeft" placeholder="原始文本..."></textarea></div>
+            <div class="input-group"><label>新文本</label><textarea id="diffRight" placeholder="新文本..."></textarea></div>
+          </div>
+          <button class="btn" id="diffBtn">对比差异</button>
+          <div class="diff-result" id="diffResult">差异将显示在这里</div>
+        </div>
+      </div>
+
+      <div class="card" id="tool-gradient">
+        <div class="card-header"><div class="icon">🌈</div><h2>CSS 渐变生成器</h2></div>
+        <div class="tool-body">
+          <div class="convert-row">
+            <div class="input-group"><label>颜色 1</label><input type="color" id="gradColor1" value="#4f46e5" style="height:48px; padding:0.2rem; cursor:pointer;"></div>
+            <div class="input-group"><label>颜色 2</label><input type="color" id="gradColor2" value="#a855f7" style="height:48px; padding:0.2rem; cursor:pointer;"></div>
+            <div class="input-group"><label>方向</label><select id="gradDirection"><option value="to right" selected>→ 水平</option><option value="to bottom">↓ 垂直</option><option value="to bottom right">↘ 对角线</option></select></div>
+          </div>
+          <div class="gradient-preview" id="gradientPreview"></div>
+          <div class="result-box mono" id="gradientCss" style="min-height:54px; font-size:0.88rem; cursor:pointer;">linear-gradient(to right, #4f46e5, #a855f7)</div>
+          <button class="btn btn-secondary btn-small" id="copyGradientBtn">复制 CSS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 栏目 6：数学工具 -->
+    <!-- ============================================================ -->
+    <div class="section-title" id="math-tools">
+      🧮 数学工具 <span class="badge">3 个工具</span>
+    </div>
+
+    <!-- 数学符号：生成 + 一键复制 -->
+    <div class="tool-grid" style="margin-bottom:1.5rem;">
+      <div class="card" id="tool-symbols" style="grid-column: 1 / -1;">
+        <div class="card-header"><div class="icon">∑</div><h2>数学符号复制</h2></div>
+        <div class="tool-body">
+          <div class="sym-toolbar">
+            <div class="input-group">
+              <label>搜索符号（中文名 / 英文名 / LaTeX）</label>
+              <input type="text" id="symSearch" placeholder="例如：积分、alpha、\sum">
+            </div>
+            <div class="sym-mode" id="symMode">
+              <button type="button" class="active" data-mode="char">复制符号</button>
+              <button type="button" data-mode="latex">复制 LaTeX</button>
+            </div>
+          </div>
+          <div class="unit-category-tabs" id="symTabs"></div>
+          <div class="sym-grid" id="symGrid"></div>
+          <div class="input-group">
+            <label>拼接区（点击符号自动追加，可直接编辑）</label>
+            <textarea id="symCompose" class="sym-compose" placeholder="点上方任意符号：会立即复制，同时拼接成公式存到这里…"></textarea>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-secondary btn-small" id="symCopyAllBtn">复制拼接内容</button>
+            <button class="btn btn-secondary btn-small" id="symBackspaceBtn">删除最后一个</button>
+            <button class="btn btn-secondary btn-small" id="symClearBtn">清空</button>
+          </div>
+          <div class="sym-hint" id="symHint">点击符号即复制到剪贴板，鼠标悬停可看符号名称与 LaTeX 写法。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-grid" style="margin-bottom:1.5rem;">
+      <div class="card" id="tool-percent">
+        <div class="card-header"><div class="icon">💯</div><h2>百分比计算</h2></div>
+        <div class="tool-body">
+          <div class="input-group"><label>数值 A</label><input type="number" id="pctA" value="200" step="any"></div>
+          <div class="input-group"><label>数值 B</label><input type="number" id="pctB" value="15" step="any"></div>
+          <div class="button-row"><button class="btn" id="pctCalcBtn">计算</button></div>
+          <div class="result-box" id="pctResult" style="font-size:0.95rem; min-height:84px; flex-direction:column; gap:0.3rem;">
+            <div>A 的 B% = <strong id="pctOut1">30</strong></div>
+            <div>A 是 B 的 <strong id="pctOut2">1333.33%</strong></div>
+            <div>B 是 A 的 <strong id="pctOut3">7.5%</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 专业计算器 -->
+    <div class="calculator-wrapper" id="tool-calculator">
+      <div class="calc-card">
+        <div class="calc-display-wrapper">
+          <div class="calc-memory-indicator" id="memoryIndicator"></div>
+          <div class="calc-expression" id="calcExpression"></div>
+          <div class="calc-main" id="calcMain">0</div>
+        </div>
+        <div class="memory-bar">
+          <button id="memClear">MC</button><button id="memRecall">MR</button><button id="memStore">MS</button><button id="memAdd">M+</button><button id="memSub">M−</button>
+        </div>
+        <div class="mode-toggle">
+          <button id="modeBasic" class="active">基础</button>
+          <button id="modeScientific">科学</button>
+        </div>
+        <div class="calc-keys" id="calcKeys">
+          <button class="key-danger" data-action="clear">AC</button>
+          <button class="key-fn" data-action="backspace">⌫</button>
+          <button class="key-fn" data-action="paren-open">(</button>
+          <button class="key-fn" data-action="paren-close">)</button>
+          <button class="key-op" data-action="percent">%</button>
+          <button data-val="7">7</button><button data-val="8">8</button><button data-val="9">9</button>
+          <button class="key-op" data-action="divide">÷</button>
+          <button class="key-fn" data-action="sqrt">√</button>
+          <button data-val="4">4</button><button data-val="5">5</button><button data-val="6">6</button>
+          <button class="key-op" data-action="multiply">×</button>
+          <button class="key-fn" data-action="power">x²</button>
+          <button data-val="1">1</button><button data-val="2">2</button><button data-val="3">3</button>
+          <button class="key-op" data-action="subtract">−</button>
+          <button class="key-fn" data-action="reciprocal">1/x</button>
+          <button class="key-zero" data-val="0">0</button>
+          <button data-val=".">.</button>
+          <button class="key-op" data-action="add">+</button>
+          <button class="key-equal" data-action="equals">=</button>
+        </div>
+        <div class="calc-keys" id="calcKeysScientific" style="display:none; margin-top:0.5rem;">
+          <button class="key-fn" data-action="sin">sin</button><button class="key-fn" data-action="cos">cos</button><button class="key-fn" data-action="tan">tan</button><button class="key-fn" data-action="log">log</button><button class="key-fn" data-action="ln">ln</button>
+          <button class="key-fn" data-action="exp">eˣ</button><button class="key-fn" data-action="abs">|x|</button><button class="key-fn" data-action="pi">π</button><button class="key-fn" data-action="e">e</button><button class="key-fn" data-action="factorial">n!</button>
+        </div>
+      </div>
+      <div class="history-card">
+        <div class="history-header"><h2>📋 历史记录</h2><button id="clearHistoryBtn">清空</button></div>
+        <div class="history-list" id="historyList"><div class="history-empty">暂无计算记录</div></div>
+      </div>
+    </div>
+
+    <!-- ===== 页脚 ===== -->
+    <div class="footer">
+      <div class="footer-meta">
+        <div>⚡ 轻量工具箱 · 翻译功能调用公开接口，数据本地处理</div>
+        <div class="footer-copyright">
+          <span>© <span id="copyrightYear">2026</span></span>
+          <strong>GitHub5457-0627</strong>
+          <span>设计与开发 · 保留所有权利</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#tool-nav">导航</a><a href="#text-tools">文本</a><a href="#translate-tools">翻译</a><a href="#convert-tools">转换</a><a href="#generate-tools">生成</a><a href="#dev-tools">开发</a><a href="#math-tools">数学</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" type="button" aria-label="返回顶部" title="返回顶部">↑</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript">本工具箱依赖 JavaScript 运行，请启用后再使用。</div></noscript>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ==================== 通用工具 ====================
+      const toast = document.getElementById('toast');
+      const rootElement = document.documentElement;
+      let toastTimer = null;
+      const COPY_PLACEHOLDERS = new Set([
+        '结果将显示在这里', '点击生成', '等待测试', '等待转换',
+        '请输入内容', '点击色块复制色值', '暂无计算记录'
+      ]);
+
+      function showToast(message, isError) {
+        toast.textContent = message;
+        toast.classList.toggle('error', !!isError);
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), isError ? 2600 : 2000);
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      function debounce(fn, wait) {
+        let timer = null;
+        return function () {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(function () { fn.apply(context, args); }, wait);
+        };
+      }
+
+      // 兼容不支持 Clipboard API 的环境（file:// 或旧浏览器）
+      function legacyCopy(text) {
+        try {
+          const host = document.createElement('textarea');
+          host.value = text;
+          host.setAttribute('readonly', '');
+          host.style.position = 'fixed';
+          host.style.top = '-1000px';
+          host.style.opacity = '0';
+          document.body.appendChild(host);
+          host.select();
+          host.setSelectionRange(0, text.length);
+          const ok = document.execCommand('copy');
+          document.body.removeChild(host);
+          return ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function writeClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text).catch(function () {
+            if (!legacyCopy(text)) throw new Error('clipboard unavailable');
+          });
+        }
+        return legacyCopy(text) ? Promise.resolve() : Promise.reject(new Error('clipboard unavailable'));
+      }
+
+      function copyToClipboard(text, label) {
+        const value = text == null ? '' : String(text);
+        if (!value.trim() || COPY_PLACEHOLDERS.has(value.trim())) {
+          showToast('没有可复制的内容', true);
+          return;
+        }
+        writeClipboard(value)
+          .then(function () { showToast(label ? label + ' 已复制' : '已复制到剪贴板'); })
+          .catch(function () { showToast('复制失败，请手动选择内容复制', true); });
+      }
+
+      // ==================== 主题切换 ====================
+      const themeToggle = document.getElementById('themeToggle');
+      function syncThemeButton() {
+        const isDark = rootElement.getAttribute('data-theme') === 'dark';
+        themeToggle.textContent = isDark ? '☀️' : '🌙';
+        themeToggle.setAttribute('aria-label', isDark ? '切换到浅色模式' : '切换到深色模式');
+        themeToggle.title = isDark ? '切换到浅色模式' : '切换到深色模式';
+      }
+      function setTheme(theme, persist) {
+        rootElement.setAttribute('data-theme', theme);
+        if (persist) { try { localStorage.setItem('dsh-theme', theme); } catch (e) {} }
+        syncThemeButton();
+        document.dispatchEvent(new CustomEvent('themechange', { detail: theme }));
+      }
+      syncThemeButton();
+      themeToggle.addEventListener('click', function () {
+        setTheme(rootElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true);
+      });
+      if (window.matchMedia) {
+        const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const onSchemeChange = function (event) {
+          let saved = null;
+          try { saved = localStorage.getItem('dsh-theme'); } catch (err) {}
+          if (saved !== 'dark' && saved !== 'light') setTheme(event.matches ? 'dark' : 'light', false);
+        };
+        if (darkQuery.addEventListener) darkQuery.addEventListener('change', onSchemeChange);
+        else if (darkQuery.addListener) darkQuery.addListener(onSchemeChange);
+      }
+
+      // ==================== 工具导航 + 搜索 ====================
+      const navItems = Array.prototype.slice.call(document.querySelectorAll('.tool-nav-item'));
+      const toolSearch = document.getElementById('toolSearch');
+      const toolSearchCount = document.getElementById('toolSearchCount');
+      const toolNavEmpty = document.getElementById('toolNavEmpty');
+
+      navItems.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.classList.add('highlight');
+            setTimeout(function () { target.classList.remove('highlight'); }, 1400);
+          }
+        });
+      });
+
+      function filterTools() {
+        const query = toolSearch.value.trim().toLowerCase();
+        let visible = 0;
+        navItems.forEach(function (item) {
+          const match = !query || item.textContent.toLowerCase().indexOf(query) !== -1;
+          item.hidden = !match;
+          if (match) visible++;
+        });
+        toolSearchCount.textContent = query ? visible + ' / ' + navItems.length : '';
+        toolNavEmpty.hidden = visible > 0;
+      }
+
+      toolSearch.addEventListener('input', filterTools);
+      toolSearch.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          toolSearch.value = '';
+          filterTools();
+          toolSearch.blur();
+        } else if (e.key === 'Enter') {
+          const first = navItems.find(function (item) { return !item.hidden; });
+          if (first) first.click();
+        }
+      });
+
+      // ==================== 工具计数（自动同步标题与徽章） ====================
+      (function syncToolCounts() {
+        const titles = Array.prototype.slice.call(document.querySelectorAll('.section-title'));
+        let total = 0;
+        titles.forEach(function (title) {
+          let count = 0;
+          let node = title.nextElementSibling;
+          while (node && !node.classList.contains('section-title')) {
+            if (node.id && node.id.indexOf('tool-') === 0 && node.id !== 'tool-nav') count++;
+            count += node.querySelectorAll('[id^="tool-"]').length;
+            node = node.nextElementSibling;
+          }
+          const badge = title.querySelector('.badge');
+          if (badge) badge.textContent = count + ' 个工具';
+          total += count;
+        });
+        const toolCountEl = document.getElementById('toolCount');
+        if (toolCountEl && total > 0) toolCountEl.textContent = total;
+      })();
+
+      // ==================== 版权年份（自动更新） ====================
+      (function syncCopyrightYear() {
+        const yearEl = document.getElementById('copyrightYear');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+      })();
+
+      // ==================== 滚动高亮 / 返回顶部 ====================
+      const sectionTitles = Array.prototype.slice.call(document.querySelectorAll('.section-title'));
+      const navSectionLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+      const backToTop = document.getElementById('backToTop');
+
+      function updateActiveSection() {
+        let current = null;
+        sectionTitles.forEach(function (title) {
+          if (title.getBoundingClientRect().top <= 140) current = title.id;
+        });
+        navSectionLinks.forEach(function (link) {
+          link.classList.toggle('active', current !== null && link.getAttribute('href') === '#' + current);
+        });
+      }
+
+      function toggleBackToTop() {
+        backToTop.classList.toggle('show', window.scrollY > 500);
+      }
+
+      let lastScrollCheck = 0;
+      function handleScroll() {
+        // 80ms 节流，避免滚动时频繁触发布局计算
+        const now = Date.now();
+        if (now - lastScrollCheck < 80) return;
+        lastScrollCheck = now;
+        updateActiveSection();
+        toggleBackToTop();
+      }
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', handleScroll);
+      updateActiveSection();
+      toggleBackToTop();
+      backToTop.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // ==================== 表单 label 关联（无障碍） ====================
+      document.querySelectorAll('.input-group').forEach(function (group) {
+        const label = group.querySelector('label');
+        const field = group.querySelector('input, select, textarea');
+        if (!label || !field) return;
+        if (!field.id) field.id = 'field-' + Math.random().toString(36).slice(2, 8);
+        if (!label.htmlFor) label.htmlFor = field.id;
+      });
+
+      // ==================== 翻译模块 ====================
+      const transInput = document.getElementById('transInput');
+      const transFrom = document.getElementById('transFrom');
+      const transTo = document.getElementById('transTo');
+      const transResult = document.getElementById('transResult');
+      const translateBtn = document.getElementById('translateBtn');
+      const LANG_MAP = { 'zh-CN': 'zh-CN', en: 'en', ja: 'ja', ko: 'ko', fr: 'fr', de: 'de', es: 'es', ru: 'ru' };
+
+      // 轻量语言识别：仅用于“自动检测”时给接口一个合理的源语言
+      function detectLanguage(text) {
+        if (/[\u3040-\u30ff]/.test(text)) return 'ja';
+        if (/[\uac00-\ud7af]/.test(text)) return 'ko';
+        if (/[\u4e00-\u9fff]/.test(text)) return 'zh-CN';
+        if (/[\u0400-\u04ff]/.test(text)) return 'ru';
+        return 'en';
+      }
+
+      function decodeHtmlEntities(value) {
+        const holder = document.createElement('textarea');
+        holder.innerHTML = value;
+        return holder.value;
+      }
+
+      async function fetchMyMemory(text, src, tgt) {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(src)}|${encodeURIComponent(tgt)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('服务暂时不可用（HTTP ' + res.status + '）');
+        const data = await res.json();
+        if (data.responseStatus !== 200) throw new Error(data.responseDetails || '翻译失败');
+        const mtText = (data.mtData && data.mtData.translatedText) || (data.responseData && data.responseData.translatedText);
+        if (!mtText) throw new Error('未获取到翻译结果');
+        if (/MYMEMORY WARNING|QUOTA/i.test(mtText)) throw new Error('免费翻译额度已用完，请稍后再试');
+        return decodeHtmlEntities(mtText);
+      }
+
+      function utf8Length(ch) {
+        const code = ch.codePointAt(0);
+        if (code < 0x80) return 1;
+        if (code < 0x800) return 2;
+        if (code < 0x10000) return 3;
+        return 4;
+      }
+
+      async function translateText(text, from, to) {
+        const src = from === 'auto' ? detectLanguage(text) : (LANG_MAP[from] || 'en');
+        const tgt = LANG_MAP[to] || 'en';
+        if (src === tgt) return text;
+        // 按字符切块，既不切断代理对（emoji），也不超出接口长度限制
+        const chunks = [];
+        let current = '';
+        let size = 0;
+        for (const ch of text) {
+          const len = utf8Length(ch);
+          if (size + len > 450 && current) {
+            chunks.push(current);
+            current = ch;
+            size = len;
+          } else {
+            current += ch;
+            size += len;
+          }
+        }
+        if (current) chunks.push(current);
+        if (chunks.length <= 1) return fetchMyMemory(text, src, tgt);
+        const results = [];
+        for (let i = 0; i < chunks.length; i++) results.push(await fetchMyMemory(chunks[i], src, tgt));
+        return results.join('');
+      }
+
+      translateBtn.addEventListener('click', async function() {
+        const text = transInput.value.trim();
+        if (!text) { transResult.textContent = '请输入要翻译的文本'; return; }
+        const from = transFrom.value;
+        const to = transTo.value;
+        if (from !== 'auto' && from === to) {
+          transResult.textContent = '源语言与目标语言相同，无需翻译';
+          return;
+        }
+        transResult.textContent = '翻译中...';
+        transResult.classList.add('loading');
+        translateBtn.disabled = true;
+        translateBtn.textContent = '翻译中...';
+        try {
+          transResult.textContent = await translateText(text, from, to);
+        } catch (e) {
+          transResult.textContent = '翻译失败：' + e.message;
+        } finally {
+          transResult.classList.remove('loading');
+          translateBtn.disabled = false;
+          translateBtn.textContent = '翻译';
+        }
+      });
+
+      transInput.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          translateBtn.click();
+        }
+      });
+
+      document.getElementById('swapLangBtn').addEventListener('click', function() {
+        if (transFrom.value === 'auto') { showToast('自动检测无法交换，请先指定源语言', true); return; }
+        const tmp = transFrom.value;
+        transFrom.value = transTo.value;
+        transTo.value = tmp;
+        if (transInput.value.trim()) translateBtn.click();
+      });
+
+      document.getElementById('copyTransBtn').addEventListener('click', () => {
+        copyToClipboard(transResult.textContent, '译文');
+      });
+
+      // ==================== 文本统计 ====================
+      const textInput = document.getElementById('textInput');
+      function updateTextStats() {
+        const text = textInput.value;
+        // 按 Unicode 字符计数，emoji 不会被算成 2 个
+        document.getElementById('charCount').textContent = Array.from(text).length;
+        // 中文按字、英文按词，符合中英文混排的统计习惯
+        const words = text.match(/[A-Za-z0-9_'’-]+|[\u4e00-\u9fff]/g);
+        document.getElementById('wordCount').textContent = words ? words.length : 0;
+        const sentences = text.split(/[.!?。！？…]+/).filter(function (s) { return s.trim().length > 0; });
+        document.getElementById('sentenceCount').textContent = (text.trim().length > 0 && sentences.length === 0) ? 1 : sentences.length;
+        document.getElementById('lineCount').textContent = text === '' ? 0 : text.split(/\r?\n/).length;
+      }
+      updateTextStats();
+      textInput.addEventListener('input', updateTextStats);
+      document.getElementById('clearTextBtn').addEventListener('click', () => { textInput.value = ''; updateTextStats(); textInput.focus(); });
+      document.getElementById('copyTextStatsBtn').addEventListener('click', () => {
+        const stats = `字符:${document.getElementById('charCount').textContent} 词:${document.getElementById('wordCount').textContent} 句:${document.getElementById('sentenceCount').textContent} 行:${document.getElementById('lineCount').textContent}`;
+        copyToClipboard(stats, '统计');
+      });
+
+      // ==================== Base64 ====================
+      const base64Input = document.getElementById('base64Input');
+      const base64Result = document.getElementById('base64Result');
+
+      // 用 TextEncoder 处理完整 UTF-8（中文、emoji 都不会丢字）
+      function utf8ToBase64(text) {
+        const bytes = new TextEncoder().encode(text);
+        let binary = '';
+        const step = 0x8000;
+        for (let i = 0; i < bytes.length; i += step) {
+          binary += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+        }
+        return btoa(binary);
+      }
+
+      function base64ToUtf8(input) {
+        const compact = input.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact)) throw new Error('包含非 Base64 字符');
+        const padded = compact + '='.repeat((4 - compact.length % 4) % 4);
+        const binary = atob(padded);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      }
+
+      document.getElementById('base64EncodeBtn').addEventListener('click', () => {
+        if (!base64Input.value.trim()) { base64Result.textContent = '请输入内容'; base64Result.classList.add('error'); return; }
+        base64Result.classList.remove('error');
+        try { base64Result.textContent = utf8ToBase64(base64Input.value); }
+        catch (e) { base64Result.textContent = '编码失败: ' + e.message; base64Result.classList.add('error'); }
+      });
+      document.getElementById('base64DecodeBtn').addEventListener('click', () => {
+        if (!base64Input.value.trim()) { base64Result.textContent = '请输入内容'; base64Result.classList.add('error'); return; }
+        base64Result.classList.remove('error');
+        try { base64Result.textContent = base64ToUtf8(base64Input.value); }
+        catch (e) { base64Result.textContent = '解码失败: 输入不是有效的 Base64（UTF-8）字符串'; base64Result.classList.add('error'); }
+      });
+      document.getElementById('copyBase64Btn').addEventListener('click', () => copyToClipboard(base64Result.textContent, 'Base64 结果'));
+
+      // ==================== URL 编解码 ====================
+      const urlInput = document.getElementById('urlInput');
+      const urlResult = document.getElementById('urlResult');
+      document.getElementById('urlEncodeBtn').addEventListener('click', () => {
+        if (!urlInput.value.trim()) { urlResult.textContent = '请输入内容'; urlResult.classList.add('error'); return; }
+        urlResult.classList.remove('error');
+        try { urlResult.textContent = encodeURIComponent(urlInput.value); }
+        catch (e) { urlResult.textContent = '编码失败: ' + e.message; urlResult.classList.add('error'); }
+      });
+      document.getElementById('urlDecodeBtn').addEventListener('click', () => {
+        if (!urlInput.value.trim()) { urlResult.textContent = '请输入内容'; urlResult.classList.add('error'); return; }
+        urlResult.classList.remove('error');
+        try { urlResult.textContent = decodeURIComponent(urlInput.value); }
+        catch (e) { urlResult.textContent = '解码失败: 输入不是有效的 URL 编码字符串'; urlResult.classList.add('error'); }
+      });
+      document.getElementById('copyUrlBtn').addEventListener('click', () => copyToClipboard(urlResult.textContent, 'URL 结果'));
+
+      // ==================== Markdown 预览 ====================
+      const mdInput = document.getElementById('mdInput');
+      const mdPreview = document.getElementById('mdPreview');
+
+      // 行内语法：`代码`、**粗体**、*斜体*、~~删除线~~、[文字](链接)、裸链接
+      function renderInline(text) {
+        const codes = [];
+        let out = escapeHtml(text).replace(/`([^`]+)`/g, function (match, code) {
+          codes.push(code);
+          return '\u0000' + (codes.length - 1) + '\u0000';
+        });
+        out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        out = out.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+        out = out.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+        out = out.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (match, label, href) {
+          const safe = /^(https?:|mailto:|tel:)/i.test(href) ? href : '#';
+          return '<a href="' + safe + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+        });
+        out = out.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,
+          '$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>');
+        out = out.replace(/\u0000(\d+)\u0000/g, function (match, index) {
+          return '<code>' + codes[Number(index)] + '</code>';
+        });
+        return out;
+      }
+
+      // 块级语法：标题、代码块、引用、有序/无序列表、分隔线、段落
+      function renderMarkdown(source) {
+        const lines = source.replace(/\r\n?/g, '\n').split('\n');
+        const html = [];
+        let paragraph = [];
+        let listType = null;
+        let listItems = [];
+        let quote = [];
+
+        function flushParagraph() {
+          if (!paragraph.length) return;
+          html.push('<p>' + paragraph.map(renderInline).join('<br>') + '</p>');
+          paragraph = [];
+        }
+        function flushList() {
+          if (!listType) return;
+          html.push('<' + listType + '>' + listItems.map(function (item) {
+            return '<li>' + renderInline(item) + '</li>';
+          }).join('') + '</' + listType + '>');
+          listType = null;
+          listItems = [];
+        }
+        function flushQuote() {
+          if (!quote.length) return;
+          html.push('<blockquote>' + quote.map(renderInline).join('<br>') + '</blockquote>');
+          quote = [];
+        }
+        function flushAll() {
+          flushParagraph();
+          flushList();
+          flushQuote();
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+
+          if (/^\s*```/.test(line)) {
+            flushAll();
+            const codeLines = [];
+            i++;
+            while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) {
+              codeLines.push(lines[i]);
+              i++;
+            }
+            html.push('<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+            continue;
+          }
+
+          if (/^\s*$/.test(line)) {
+            flushAll();
+            continue;
+          }
+
+          const heading = line.match(/^(#{1,6})\s+(.*)$/);
+          if (heading) {
+            flushAll();
+            const level = heading[1].length;
+            html.push('<h' + level + '>' + renderInline(heading[2]) + '</h' + level + '>');
+            continue;
+          }
+
+          if (/^\s{0,3}([*_-])\1{2,}\s*$/.test(line)) {
+            flushAll();
+            html.push('<hr>');
+            continue;
+          }
+
+          if (/^\s*>\s?/.test(line)) {
+            flushParagraph();
+            flushList();
+            quote.push(line.replace(/^\s*>\s?/, ''));
+            continue;
+          }
+          flushQuote();
+
+          const unordered = line.match(/^\s*[-*+]\s+(.*)$/);
+          if (unordered) {
+            flushParagraph();
+            if (listType && listType !== 'ul') flushList();
+            listType = 'ul';
+            listItems.push(unordered[1]);
+            continue;
+          }
+
+          const ordered = line.match(/^\s*\d+[.)]\s+(.*)$/);
+          if (ordered) {
+            flushParagraph();
+            if (listType && listType !== 'ol') flushList();
+            listType = 'ol';
+            listItems.push(ordered[1]);
+            continue;
+          }
+
+          flushList();
+          paragraph.push(line);
+        }
+
+        flushAll();
+        return html.join('') || '<div class="md-empty">在上方输入 Markdown，这里会实时预览</div>';
+      }
+
+      function renderMarkdownPreview() {
+        const scrollTop = mdPreview.scrollTop;
+        mdPreview.innerHTML = renderMarkdown(mdInput.value);
+        mdPreview.scrollTop = scrollTop;
+      }
+      const debouncedMarkdown = debounce(renderMarkdownPreview, 120);
+      renderMarkdownPreview();
+      mdInput.addEventListener('input', debouncedMarkdown);
+      document.getElementById('copyMdBtn').addEventListener('click', () => copyToClipboard(mdInput.value, 'Markdown'));
+
+      // ==================== 长度换算 ====================
+      const lengthInput = document.getElementById('lengthInput');
+      const lengthFrom = document.getElementById('lengthFrom');
+      const lengthTo = document.getElementById('lengthTo');
+      const lengthResult = document.getElementById('lengthResult');
+      const lengthFactors = { m: 1, km: 1000, cm: 0.01, mm: 0.001, inch: 0.0254, foot: 0.3048 };
+      const unitNames = { m: '米 (m)', km: '千米 (km)', cm: '厘米 (cm)', mm: '毫米 (mm)', inch: '英寸 (inch)', foot: '英尺 (ft)' };
+      function convertLength() {
+        const rawValue = parseFloat(lengthInput.value);
+        if (isNaN(rawValue) || !isFinite(rawValue)) { lengthResult.innerHTML = '<span style="color:var(--danger);">请输入有效数字</span>'; return; }
+        const valueInMeters = rawValue * lengthFactors[lengthFrom.value];
+        const convertedValue = valueInMeters / lengthFactors[lengthTo.value];
+        let formattedValue = Number.isInteger(convertedValue) ? convertedValue.toString() : parseFloat(convertedValue.toFixed(8)).toString();
+        if (Math.abs(convertedValue) > 1e6 || (Math.abs(convertedValue) < 1e-4 && convertedValue !== 0)) formattedValue = convertedValue.toExponential(4);
+        lengthResult.innerHTML = `<span class="big-number">${formattedValue}</span> <small>${unitNames[lengthTo.value]}</small>`;
+      }
+      convertLength();
+      lengthInput.addEventListener('input', convertLength);
+      lengthFrom.addEventListener('change', convertLength);
+      lengthTo.addEventListener('change', convertLength);
+      document.getElementById('copyLengthBtn').addEventListener('click', () => {
+        copyToClipboard(lengthResult.textContent, '长度结果');
+      });
+
+      // ==================== 重量/温度换算 ====================
+      const unitType = document.getElementById('unitType');
+      const unitInput = document.getElementById('unitInput');
+      const unitFrom = document.getElementById('unitFrom');
+      const unitTo = document.getElementById('unitTo');
+      const unitResult = document.getElementById('unitResult');
+      const weightUnits = { kg: { name: '千克 (kg)', factor: 1 }, g: { name: '克 (g)', factor: 0.001 }, mg: { name: '毫克 (mg)', factor: 0.000001 }, lb: { name: '磅 (lb)', factor: 0.45359237 }, oz: { name: '盎司 (oz)', factor: 0.028349523125 } };
+      const tempUnits = { c: { name: '摄氏度 (°C)' }, f: { name: '华氏度 (°F)' }, k: { name: '开尔文 (K)' } };
+      function populateUnitSelects() {
+        const type = unitType.value;
+        const units = type === 'weight' ? weightUnits : tempUnits;
+        unitFrom.innerHTML = ''; unitTo.innerHTML = '';
+        Object.keys(units).forEach(key => {
+          const opt1 = document.createElement('option'); opt1.value = key; opt1.textContent = units[key].name; unitFrom.appendChild(opt1);
+          const opt2 = document.createElement('option'); opt2.value = key; opt2.textContent = units[key].name; unitTo.appendChild(opt2);
+        });
+        if (Object.keys(units).length > 1) unitTo.selectedIndex = 1;
+        convertUnit();
+      }
+      function convertUnit() {
+        const rawValue = parseFloat(unitInput.value);
+        if (isNaN(rawValue) || !isFinite(rawValue)) { unitResult.innerHTML = '<span style="color:var(--danger);">请输入有效数字</span>'; return; }
+        const type = unitType.value, fromKey = unitFrom.value, toKey = unitTo.value;
+        let convertedValue, toName;
+        if (type === 'weight') {
+          convertedValue = (rawValue * weightUnits[fromKey].factor) / weightUnits[toKey].factor;
+          toName = weightUnits[toKey].name;
+        } else {
+          let celsius;
+          if (fromKey === 'c') celsius = rawValue;
+          else if (fromKey === 'f') celsius = (rawValue - 32) * 5 / 9;
+          else celsius = rawValue - 273.15;
+          if (toKey === 'c') convertedValue = celsius;
+          else if (toKey === 'f') convertedValue = celsius * 9 / 5 + 32;
+          else convertedValue = celsius + 273.15;
+          toName = tempUnits[toKey].name;
+        }
+        let formattedValue = Number.isInteger(convertedValue) ? convertedValue.toString() : parseFloat(convertedValue.toFixed(6)).toString();
+        unitResult.innerHTML = `<span class="big-number">${formattedValue}</span> <small>${toName}</small>`;
+      }
+      unitType.addEventListener('change', populateUnitSelects);
+      unitInput.addEventListener('input', convertUnit);
+      unitFrom.addEventListener('change', convertUnit);
+      unitTo.addEventListener('change', convertUnit);
+      populateUnitSelects();
+      document.getElementById('copyUnitBtn').addEventListener('click', () => {
+        copyToClipboard(unitResult.textContent, '换算结果');
+      });
+
+      // ==================== 进制转换 ====================
+      const baseInput = document.getElementById('baseInput');
+      const baseFrom = document.getElementById('baseFrom');
+      const baseBin = document.getElementById('baseBin');
+      const baseOct = document.getElementById('baseOct');
+      const baseDec = document.getElementById('baseDec');
+      const baseHex = document.getElementById('baseHex');
+
+      function updateBaseConvert() {
+        const raw = baseInput.value.trim();
+        const fromBase = parseInt(baseFrom.value, 10);
+        const outputs = [baseBin, baseOct, baseDec, baseHex];
+        outputs.forEach(function (el) { el.classList.remove('error'); });
+
+        if (!raw) {
+          outputs.forEach(function (el) { el.textContent = '-'; });
+          return;
+        }
+
+        try {
+          let body = raw.replace(/[\s_]/g, '');
+          let negative = false;
+          if (body[0] === '+' || body[0] === '-') {
+            negative = body[0] === '-';
+            body = body.slice(1);
+          }
+          if (fromBase === 16 && /^0x/i.test(body)) body = body.slice(2);
+          if (fromBase === 2 && /^0b/i.test(body)) body = body.slice(2);
+          if (fromBase === 8 && /^0o/i.test(body)) body = body.slice(2);
+          if (!body) throw new Error('空输入');
+
+          // 一律用 BigInt 计算：超过 2^53 的数值也不会丢精度
+          const digitMap = '0123456789abcdef';
+          const bigBase = BigInt(fromBase);
+          let value = BigInt(0);
+          for (let i = 0; i < body.length; i++) {
+            const digit = digitMap.indexOf(body[i].toLowerCase());
+            if (digit < 0 || digit >= fromBase) throw new Error('无效字符');
+            value = value * bigBase + BigInt(digit);
+          }
+          if (negative) value = -value;
+
+          baseBin.textContent = value.toString(2);
+          baseOct.textContent = value.toString(8);
+          baseDec.textContent = value.toString(10);
+          baseHex.textContent = value.toString(16).toUpperCase();
+        } catch (e) {
+          outputs.forEach(function (el) {
+            el.textContent = '无效输入';
+            el.classList.add('error');
+          });
+        }
+      }
+
+      baseInput.addEventListener('input', updateBaseConvert);
+      baseFrom.addEventListener('change', updateBaseConvert);
+      updateBaseConvert();
+
+      document.getElementById('copyBaseConvertBtn').addEventListener('click', () => {
+        const result = `BIN: ${baseBin.textContent}\nOCT: ${baseOct.textContent}\nDEC: ${baseDec.textContent}\nHEX: ${baseHex.textContent}`;
+        copyToClipboard(result, '进制转换结果');
+      });
+
+      // ==================== 常用单位换算 ====================
+      const generalUnitInput = document.getElementById('generalUnitInput');
+      const generalUnitFrom = document.getElementById('generalUnitFrom');
+      const generalUnitTo = document.getElementById('generalUnitTo');
+      const generalUnitResult = document.getElementById('generalUnitResult');
+
+      const unitCategories = {
+        length: { name: '长度', units: { m: { name: '米 (m)', factor: 1 }, km: { name: '千米 (km)', factor: 1000 }, cm: { name: '厘米 (cm)', factor: 0.01 }, mm: { name: '毫米 (mm)', factor: 0.001 }, um: { name: '微米 (μm)', factor: 1e-6 }, nm: { name: '纳米 (nm)', factor: 1e-9 }, inch: { name: '英寸 (in)', factor: 0.0254 }, foot: { name: '英尺 (ft)', factor: 0.3048 }, yard: { name: '码 (yd)', factor: 0.9144 }, mile: { name: '英里 (mi)', factor: 1609.344 }, nautical: { name: '海里 (nmi)', factor: 1852 } } },
+        weight: { name: '重量', units: { kg: { name: '千克 (kg)', factor: 1 }, g: { name: '克 (g)', factor: 0.001 }, mg: { name: '毫克 (mg)', factor: 1e-6 }, t: { name: '吨 (t)', factor: 1000 }, lb: { name: '磅 (lb)', factor: 0.45359237 }, oz: { name: '盎司 (oz)', factor: 0.028349523125 }, jin: { name: '斤', factor: 0.5 }, liang: { name: '两', factor: 0.05 } } },
+        area: { name: '面积', units: { m2: { name: '平方米 (m²)', factor: 1 }, km2: { name: '平方千米 (km²)', factor: 1e6 }, cm2: { name: '平方厘米 (cm²)', factor: 1e-4 }, mm2: { name: '平方毫米 (mm²)', factor: 1e-6 }, hectare: { name: '公顷 (ha)', factor: 10000 }, mu: { name: '亩', factor: 666.666666667 }, ft2: { name: '平方英尺 (ft²)', factor: 0.09290304 }, in2: { name: '平方英寸 (in²)', factor: 0.00064516 }, acre: { name: '英亩 (acre)', factor: 4046.8564224 } } },
+        volume: { name: '体积', units: { l: { name: '升 (L)', factor: 1 }, ml: { name: '毫升 (mL)', factor: 0.001 }, m3: { name: '立方米 (m³)', factor: 1000 }, cm3: { name: '立方厘米 (cm³)', factor: 0.001 }, gal: { name: '加仑 (US gal)', factor: 3.785411784 }, qt: { name: '夸脱 (US qt)', factor: 0.946352946 }, pt: { name: '品脱 (US pt)', factor: 0.473176473 }, cup: { name: '杯 (US cup)', factor: 0.2365882365 }, floz: { name: '液量盎司 (US fl oz)', factor: 0.0295735295625 } } },
+        speed: { name: '速度', units: { 'm/s': { name: '米/秒 (m/s)', factor: 1 }, 'km/h': { name: '千米/小时 (km/h)', factor: 1 / 3.6 }, 'mph': { name: '英里/小时 (mph)', factor: 0.44704 }, 'knot': { name: '节 (kn)', factor: 0.514444444 }, 'ft/s': { name: '英尺/秒 (ft/s)', factor: 0.3048 } } },
+        data: { name: '数据存储', units: { B: { name: '字节 (B)', factor: 1 }, KB: { name: '千字节 (KB)', factor: 1024 }, MB: { name: '兆字节 (MB)', factor: 1024 ** 2 }, GB: { name: '吉字节 (GB)', factor: 1024 ** 3 }, TB: { name: '太字节 (TB)', factor: 1024 ** 4 }, bit: { name: '比特 (bit)', factor: 1 / 8 }, Kbit: { name: '千比特 (Kbit)', factor: 1024 / 8 }, Mbit: { name: '兆比特 (Mbit)', factor: 1024 ** 2 / 8 } } }
+      };
+
+      let currentUnitCategory = 'length';
+
+      function populateGeneralUnitSelects() {
+        const cat = unitCategories[currentUnitCategory];
+        generalUnitFrom.innerHTML = '';
+        generalUnitTo.innerHTML = '';
+        const keys = Object.keys(cat.units);
+        keys.forEach(key => {
+          const opt1 = document.createElement('option');
+          opt1.value = key; opt1.textContent = cat.units[key].name;
+          generalUnitFrom.appendChild(opt1);
+          const opt2 = document.createElement('option');
+          opt2.value = key; opt2.textContent = cat.units[key].name;
+          generalUnitTo.appendChild(opt2);
+        });
+        if (keys.length > 1) { generalUnitFrom.selectedIndex = 0; generalUnitTo.selectedIndex = 1; }
+        convertGeneralUnit();
+      }
+
+      function convertGeneralUnit() {
+        const rawValue = parseFloat(generalUnitInput.value);
+        if (isNaN(rawValue) || !isFinite(rawValue)) {
+          generalUnitResult.innerHTML = '<span style="color:var(--danger);">请输入有效数字</span>';
+          return;
+        }
+        const cat = unitCategories[currentUnitCategory];
+        const fromKey = generalUnitFrom.value;
+        const toKey = generalUnitTo.value;
+        if (!fromKey || !toKey) return;
+        const convertedValue = (rawValue * cat.units[fromKey].factor) / cat.units[toKey].factor;
+        let formattedValue;
+        if (Number.isInteger(convertedValue)) formattedValue = convertedValue.toString();
+        else formattedValue = parseFloat(convertedValue.toPrecision(10)).toString();
+        if (Math.abs(convertedValue) > 1e12 || (Math.abs(convertedValue) < 1e-6 && convertedValue !== 0)) formattedValue = convertedValue.toExponential(4);
+        generalUnitResult.innerHTML = `<span class="big-number">${formattedValue}</span> <small>${cat.units[toKey].name}</small>`;
+      }
+
+      document.querySelectorAll('#unitCategoryTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('#unitCategoryTabs button').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentUnitCategory = this.dataset.cat;
+          populateGeneralUnitSelects();
+        });
+      });
+
+      generalUnitInput.addEventListener('input', convertGeneralUnit);
+      generalUnitFrom.addEventListener('change', convertGeneralUnit);
+      generalUnitTo.addEventListener('change', convertGeneralUnit);
+      populateGeneralUnitSelects();
+
+      document.getElementById('copyGeneralUnitBtn').addEventListener('click', () => {
+        copyToClipboard(generalUnitResult.textContent, '单位换算结果');
+      });
+
+      // ==================== 时间戳转换 ====================
+      const timestampInput = document.getElementById('timestampInput');
+      const timestampResult = document.getElementById('timestampResult');
+      const dateTimeInput = document.getElementById('dateTimeInput');
+
+      function pad2(value) {
+        return value < 10 ? '0' + value : String(value);
+      }
+
+      function formatDateTimeLocal(date) {
+        return date.getFullYear() + '-' + pad2(date.getMonth() + 1) + '-' + pad2(date.getDate()) +
+          'T' + pad2(date.getHours()) + ':' + pad2(date.getMinutes()) + ':' + pad2(date.getSeconds());
+      }
+
+      function relativeTime(date) {
+        const diff = date.getTime() - Date.now();
+        const abs = Math.abs(diff);
+        const units = [
+          [365 * 24 * 3600 * 1000, '年'],
+          [30 * 24 * 3600 * 1000, '个月'],
+          [24 * 3600 * 1000, '天'],
+          [3600 * 1000, '小时'],
+          [60 * 1000, '分钟'],
+          [1000, '秒']
+        ];
+        for (let i = 0; i < units.length; i++) {
+          if (abs >= units[i][0]) {
+            const value = Math.round(abs / units[i][0]);
+            return diff >= 0 ? value + ' ' + units[i][1] + '后' : value + ' ' + units[i][1] + '前';
+          }
+        }
+        return '刚刚';
+      }
+
+      function showTimestamp(ts, isMillis) {
+        const date = new Date(isMillis ? ts : ts * 1000);
+        if (isNaN(date.getTime())) throw new Error('无效时间');
+        const local = date.toLocaleString('zh-CN', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+        });
+        timestampResult.innerHTML =
+          '<strong>' + escapeHtml(local) + '</strong><br>' +
+          '<small>UTC: ' + date.toISOString() + '</small><br>' +
+          '<small>' + escapeHtml(relativeTime(date)) + ' · ' + (isMillis ? '毫秒时间戳' : '秒时间戳') + '</small>';
+      }
+
+      document.getElementById('timestampToDateBtn').addEventListener('click', () => {
+        const raw = timestampInput.value.trim();
+        if (!raw) { timestampResult.textContent = '请输入时间戳'; timestampResult.classList.add('error'); return; }
+        const ts = Number(raw);
+        if (!isFinite(ts)) { timestampResult.textContent = '请输入有效的数字时间戳'; timestampResult.classList.add('error'); return; }
+        timestampResult.classList.remove('error');
+        try {
+          // 10 位左右是秒，13 位左右是毫秒，自动识别
+          showTimestamp(ts, Math.abs(ts) >= 1e11);
+        } catch (e) {
+          timestampResult.textContent = '无效的时间戳';
+          timestampResult.classList.add('error');
+        }
+      });
+
+      document.getElementById('dateToTimestampBtn').addEventListener('click', () => {
+        if (!dateTimeInput.value) { showToast('请先选择日期时间', true); return; }
+        const date = new Date(dateTimeInput.value);
+        if (isNaN(date.getTime())) { showToast('日期格式不正确', true); return; }
+        const seconds = Math.floor(date.getTime() / 1000);
+        timestampInput.value = seconds;
+        timestampResult.classList.remove('error');
+        timestampResult.innerHTML = '秒: <strong>' + seconds + '</strong><br><small>毫秒: ' + date.getTime() + '</small>';
+      });
+
+      document.getElementById('nowTimestampBtn').addEventListener('click', () => {
+        const now = new Date();
+        const seconds = Math.floor(now.getTime() / 1000);
+        timestampInput.value = seconds;
+        dateTimeInput.value = formatDateTimeLocal(now);
+        timestampResult.classList.remove('error');
+        showTimestamp(seconds, false);
+      });
+
+      (function initTimestamp() {
+        const now = new Date();
+        timestampInput.value = Math.floor(now.getTime() / 1000);
+        dateTimeInput.value = formatDateTimeLocal(now);
+      })();
+
+      document.getElementById('copyTimestampBtn').addEventListener('click', () => {
+        copyToClipboard(timestampResult.textContent, '时间戳结果');
+      });
+
+      // ==================== 颜色转换 ====================
+      const colorPicker = document.getElementById('colorPicker');
+      const colorPreview = document.getElementById('colorPreview');
+      const hexCode = document.getElementById('hexCode');
+      const rgbCode = document.getElementById('rgbCode');
+      const hslCode = document.getElementById('hslCode');
+      const hexInput = document.getElementById('hexInput');
+
+      function normalizeHex(value) {
+        let hex = String(value).trim().replace(/^#/, '');
+        if (/^[0-9a-f]{3}$/i.test(hex)) hex = hex.split('').map(function (c) { return c + c; }).join('');
+        if (!/^[0-9a-f]{6}$/i.test(hex)) return null;
+        return '#' + hex.toUpperCase();
+      }
+
+      function hexToRgb(hex) {
+        const clean = hex.replace('#', '');
+        return {
+          r: parseInt(clean.slice(0, 2), 16),
+          g: parseInt(clean.slice(2, 4), 16),
+          b: parseInt(clean.slice(4, 6), 16)
+        };
+      }
+
+      function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        let h = 0;
+        let s = 0;
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+          else if (max === g) h = (b - r) / d + 2;
+          else h = (r - g) / d + 4;
+          h /= 6;
+        }
+        return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+      }
+
+      function applyColor(value, syncInput) {
+        const normalized = normalizeHex(value);
+        if (!normalized) return false;
+        const rgb = hexToRgb(normalized);
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        colorPicker.value = normalized;
+        if (hexInput && syncInput !== false) hexInput.value = normalized;
+        colorPreview.style.backgroundColor = normalized;
+        hexCode.textContent = normalized;
+        rgbCode.textContent = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+        hslCode.textContent = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+        return true;
+      }
+
+      colorPicker.addEventListener('input', function () { applyColor(colorPicker.value); });
+
+      hexInput.addEventListener('input', function () {
+        const value = hexInput.value.trim();
+        const ok = applyColor(value, false);
+        hexInput.classList.toggle('error', !ok && value.length > 0);
+      });
+      hexInput.addEventListener('blur', function () {
+        if (!applyColor(hexInput.value)) {
+          hexInput.value = hexCode.textContent;
+          hexInput.classList.remove('error');
+          if (hexInput.value) showToast('色值格式应为 #RGB 或 #RRGGBB', true);
+        }
+      });
+      hexInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); hexInput.blur(); }
+      });
+
+      hexCode.addEventListener('click', function () { copyToClipboard(hexCode.textContent, 'HEX'); });
+      rgbCode.addEventListener('click', function () { copyToClipboard(rgbCode.textContent, 'RGB'); });
+      hslCode.addEventListener('click', function () { copyToClipboard(hslCode.textContent, 'HSL'); });
+      document.getElementById('copyHexBtn').addEventListener('click', () => copyToClipboard(hexCode.textContent, 'HEX'));
+      document.getElementById('copyRgbBtn').addEventListener('click', () => copyToClipboard(rgbCode.textContent, 'RGB'));
+      document.getElementById('copyHslBtn').addEventListener('click', () => copyToClipboard(hslCode.textContent, 'HSL'));
+      applyColor('#4F46E5');
+
+      // ==================== 调色板 ====================
+      const paletteGrid = document.getElementById('paletteGrid');
+      const paletteResult = document.getElementById('paletteResult');
+      const paletteColors = ['#0b1220', '#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#4f46e5', '#7c3aed', '#c026d3', '#db2777', '#f43f5e', '#fde047', '#a3e635', '#34d399', '#2dd4bf', '#38bdf8', '#818cf8', '#e879f9', '#fb923c'];
+
+      function copyPaletteColor(color) {
+        paletteResult.textContent = color.toUpperCase();
+        copyToClipboard(color.toUpperCase(), '色值');
+      }
+
+      paletteColors.forEach(function (color) {
+        const swatch = document.createElement('div');
+        swatch.className = 'palette-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.title = color.toUpperCase();
+        swatch.setAttribute('role', 'button');
+        swatch.setAttribute('tabindex', '0');
+        swatch.setAttribute('aria-label', '复制色值 ' + color.toUpperCase());
+        swatch.addEventListener('click', function () { copyPaletteColor(color); });
+        swatch.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            copyPaletteColor(color);
+          }
+        });
+        paletteGrid.appendChild(swatch);
+      });
+
+      // ==================== HTML 实体编解码 ====================
+      const htmlInput = document.getElementById('htmlInput');
+      const htmlResult = document.getElementById('htmlResult');
+      document.getElementById('htmlEncodeBtn').addEventListener('click', () => {
+        if (!htmlInput.value.trim()) { htmlResult.textContent = '请输入内容'; htmlResult.classList.add('error'); return; }
+        htmlResult.classList.remove('error');
+        const div = document.createElement('div'); div.textContent = htmlInput.value; htmlResult.textContent = div.innerHTML;
+      });
+      document.getElementById('htmlDecodeBtn').addEventListener('click', () => {
+        if (!htmlInput.value.trim()) { htmlResult.textContent = '请输入内容'; htmlResult.classList.add('error'); return; }
+        htmlResult.classList.remove('error');
+        const div = document.createElement('div'); div.innerHTML = htmlInput.value; htmlResult.textContent = div.textContent || div.innerText || '';
+      });
+      document.getElementById('copyHtmlBtn').addEventListener('click', () => copyToClipboard(htmlResult.textContent, 'HTML 结果'));
+
+      // ==================== 密码生成器 ====================
+      const pwdLength = document.getElementById('pwdLength');
+      const pwdUpper = document.getElementById('pwdUpper');
+      const pwdLower = document.getElementById('pwdLower');
+      const pwdNumber = document.getElementById('pwdNumber');
+      const pwdSymbol = document.getElementById('pwdSymbol');
+      const pwdResult = document.getElementById('pwdResult');
+
+      const PWD_SETS = {
+        upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        lower: 'abcdefghijklmnopqrstuvwxyz',
+        number: '0123456789',
+        symbol: '!@#$%^&*()_+~`|}{[]:;?><,./-='
+      };
+
+      function secureRandomInt(max) {
+        const cryptoObj = window.crypto || window.msCrypto;
+        if (!cryptoObj || !cryptoObj.getRandomValues) return Math.floor(Math.random() * max);
+        // 拒绝采样：避免取模带来的分布偏差
+        const limit = Math.floor(4294967296 / max) * max;
+        const buffer = new Uint32Array(1);
+        let value = 0;
+        do {
+          cryptoObj.getRandomValues(buffer);
+          value = buffer[0];
+        } while (value >= limit);
+        return value % max;
+      }
+
+      function shuffleSecure(chars) {
+        for (let i = chars.length - 1; i > 0; i--) {
+          const j = secureRandomInt(i + 1);
+          const tmp = chars[i];
+          chars[i] = chars[j];
+          chars[j] = tmp;
+        }
+        return chars;
+      }
+
+      function generatePassword() {
+        const length = parseInt(pwdLength.value, 10);
+        if (isNaN(length) || length < 4 || length > 64) {
+          pwdResult.textContent = '长度请在 4-64 之间';
+          pwdResult.classList.add('error');
+          return;
+        }
+        const pools = [];
+        if (pwdUpper.checked) pools.push(PWD_SETS.upper);
+        if (pwdLower.checked) pools.push(PWD_SETS.lower);
+        if (pwdNumber.checked) pools.push(PWD_SETS.number);
+        if (pwdSymbol.checked) pools.push(PWD_SETS.symbol);
+        if (!pools.length) {
+          pwdResult.textContent = '请至少选择一种字符类型';
+          pwdResult.classList.add('error');
+          return;
+        }
+        const all = pools.join('');
+        const chars = [];
+        // 保证每种勾选的字符类型至少出现一次
+        pools.forEach(function (pool) { chars.push(pool[secureRandomInt(pool.length)]); });
+        while (chars.length < length) chars.push(all[secureRandomInt(all.length)]);
+        pwdResult.classList.remove('error');
+        pwdResult.textContent = shuffleSecure(chars).slice(0, length).join('');
+      }
+      document.getElementById('generatePwdBtn').addEventListener('click', generatePassword);
+      document.getElementById('regenPwdBtn').addEventListener('click', generatePassword);
+      document.getElementById('copyPwdBtn').addEventListener('click', () => {
+        const pwd = pwdResult.textContent;
+        if (pwd && pwd !== '点击生成' && pwd !== '请至少选择一种字符类型' && pwd !== '长度请在 4-64 之间') copyToClipboard(pwd, '密码');
+      });
+      generatePassword();
+
+      // ==================== 二维码生成 ====================
+      const qrcodeInput = document.getElementById('qrcodeInput');
+      const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+      let qrLibPromise = null;
+      let qrRendered = false;
+
+      // 按需加载二维码库：首屏不再被 50KB 的 CDN 脚本阻塞
+      function loadQrLibrary() {
+        if (window.QRCode) return Promise.resolve(window.QRCode);
+        if (qrLibPromise) return qrLibPromise;
+        qrLibPromise = new Promise(function (resolve, reject) {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+          script.async = true;
+          script.onload = function () {
+            if (window.QRCode) resolve(window.QRCode);
+            else reject(new Error('二维码库加载异常'));
+          };
+          script.onerror = function () { reject(new Error('网络不可用')); };
+          document.head.appendChild(script);
+        });
+        return qrLibPromise;
+      }
+
+      function drawQrPlaceholder(message) {
+        const ctx = qrcodeCanvas.getContext('2d');
+        if (!ctx) return;
+        const size = 220;
+        qrcodeCanvas.width = size;
+        qrcodeCanvas.height = size;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, size, size);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(message, size / 2, size / 2);
+      }
+
+      function qrColors() {
+        const isDark = rootElement.getAttribute('data-theme') === 'dark';
+        return { dark: isDark ? '#e6edf9' : '#0b1220', light: isDark ? '#111a2b' : '#ffffff' };
+      }
+
+      async function generateQRCode() {
+        const text = qrcodeInput.value.trim();
+        if (!text) {
+          drawQrPlaceholder('请输入内容');
+          showToast('请输入二维码内容', true);
+          return;
+        }
+        try {
+          const lib = await loadQrLibrary();
+          await new Promise(function (resolve, reject) {
+            lib.toCanvas(qrcodeCanvas, text, { width: 220, margin: 2, color: qrColors() }, function (err) {
+              if (err) reject(err); else resolve();
+            });
+          });
+          qrRendered = true;
+        } catch (e) {
+          drawQrPlaceholder('二维码库加载失败，请检查网络');
+          showToast('二维码库加载失败，请检查网络后重试', true);
+        }
+      }
+
+      document.getElementById('generateQrBtn').addEventListener('click', generateQRCode);
+      qrcodeInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); generateQRCode(); }
+      });
+
+      // 滚动到二维码卡片附近时才加载库，并只生成一次
+      if ('IntersectionObserver' in window) {
+        const qrObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              qrObserver.disconnect();
+              generateQRCode();
+            }
+          });
+        }, { rootMargin: '200px' });
+        qrObserver.observe(document.getElementById('tool-qrcode'));
+      } else {
+        generateQRCode();
+      }
+
+      // 主题切换后重绘，保证深色背景下的二维码对比度
+      document.addEventListener('themechange', function () {
+        if (qrRendered) generateQRCode();
+      });
+
+      // ==================== 随机数生成器 ====================
+      document.getElementById('generateRandBtn').addEventListener('click', () => {
+        let min = parseInt(document.getElementById('randMin').value, 10);
+        let max = parseInt(document.getElementById('randMax').value, 10);
+        const count = Math.min(20, Math.max(1, parseInt(document.getElementById('randCount').value, 10) || 1));
+        if (isNaN(min) || isNaN(max)) { document.getElementById('randResult').innerHTML = '<span style="color:var(--danger);">请输入有效数字</span>'; return; }
+        if (min > max) [min, max] = [max, min];
+        if (count === 1) {
+          document.getElementById('randResult').innerHTML = `<span class="big-number">${Math.floor(Math.random() * (max - min + 1)) + min}</span>`;
+        } else {
+          const nums = [];
+          for (let i = 0; i < count; i++) nums.push(Math.floor(Math.random() * (max - min + 1)) + min);
+          document.getElementById('randResult').innerHTML = `<span style="font-size:1.05rem; font-family:monospace; word-break:break-all;">${nums.join(', ')}</span>`;
+        }
+      });
+
+      // ==================== UUID 生成器 ====================
+      const uuidResult = document.getElementById('uuidResult');
+      function generateUUID() {
+        const cryptoObj = window.crypto || window.msCrypto;
+        if (cryptoObj && typeof cryptoObj.randomUUID === 'function') return cryptoObj.randomUUID();
+        if (cryptoObj && cryptoObj.getRandomValues) {
+          const bytes = new Uint8Array(16);
+          cryptoObj.getRandomValues(bytes);
+          bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+          bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
+          const hex = Array.prototype.map.call(bytes, function (b) {
+            return ('0' + b.toString(16)).slice(-2);
+          }).join('');
+          return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' +
+            hex.slice(16, 20) + '-' + hex.slice(20);
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          const r = Math.random() * 16 | 0;
+          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+      }
+      document.getElementById('generateUuidBtn').addEventListener('click', () => {
+        const count = Math.min(10, Math.max(1, parseInt(document.getElementById('uuidCount').value, 10) || 1));
+        const uuids = []; for (let i = 0; i < count; i++) uuids.push(generateUUID());
+        uuidResult.textContent = uuids.join('\n');
+      });
+      document.getElementById('copyUuidBtn').addEventListener('click', () => {
+        if (uuidResult.textContent && uuidResult.textContent !== '点击生成') copyToClipboard(uuidResult.textContent, 'UUID');
+      });
+
+      // ==================== JSON 格式化 ====================
+      const jsonInput = document.getElementById('jsonInput');
+      const jsonResult = document.getElementById('jsonResult');
+      document.getElementById('jsonFormatBtn').addEventListener('click', () => {
+        if (!jsonInput.value.trim()) { jsonResult.textContent = '请输入 JSON'; jsonResult.classList.add('error'); return; }
+        jsonResult.classList.remove('error');
+        try { jsonResult.textContent = JSON.stringify(JSON.parse(jsonInput.value), null, 2); }
+        catch (e) { jsonResult.textContent = 'JSON 格式错误: ' + e.message; jsonResult.classList.add('error'); }
+      });
+      document.getElementById('jsonMinifyBtn').addEventListener('click', () => {
+        if (!jsonInput.value.trim()) { jsonResult.textContent = '请输入 JSON'; jsonResult.classList.add('error'); return; }
+        jsonResult.classList.remove('error');
+        try { jsonResult.textContent = JSON.stringify(JSON.parse(jsonInput.value)); }
+        catch (e) { jsonResult.textContent = 'JSON 格式错误: ' + e.message; jsonResult.classList.add('error'); }
+      });
+      document.getElementById('validateJsonBtn').addEventListener('click', () => {
+        try { JSON.parse(jsonInput.value); jsonResult.textContent = '✓ JSON 格式正确'; jsonResult.classList.remove('error'); }
+        catch (e) { jsonResult.textContent = '✗ JSON 格式错误: ' + e.message; jsonResult.classList.add('error'); }
+      });
+      document.getElementById('copyJsonBtn').addEventListener('click', () => copyToClipboard(jsonResult.textContent, 'JSON 结果'));
+
+      // ==================== 正则表达式测试 ====================
+      const regexPattern = document.getElementById('regexPattern');
+      const regexFlags = document.getElementById('regexFlags');
+      const regexText = document.getElementById('regexText');
+      const regexResult = document.getElementById('regexResult');
+
+      function describeMatch(match, index) {
+        let text = '[' + index + '] "' + match[0] + '" (索引 ' + match.index + ')';
+        if (match.length > 1) {
+          text += ' 分组: ' + match.slice(1).map(function (group, i) {
+            return '$' + (i + 1) + '=' + JSON.stringify(group);
+          }).join(' ');
+        }
+        return text;
+      }
+
+      document.getElementById('testRegexBtn').addEventListener('click', () => {
+        regexResult.classList.remove('error');
+        try {
+          const flags = regexFlags.value.replace(/[^gimsuyd]/g, '');
+          const regex = new RegExp(regexPattern.value, flags);
+          const text = regexText.value;
+          if (text.length > 200000) {
+            regexResult.textContent = '测试文本过长（超过 20 万字符），请分段测试';
+            regexResult.classList.add('error');
+            return;
+          }
+          if (!regex.global) {
+            const match = text.match(regex);
+            if (!match) { regexResult.textContent = '没有匹配项'; return; }
+            let output = '匹配成功: "' + match[0] + '"\n位置: ' + match.index;
+            if (match.length > 1) {
+              output += '\n分组: ' + match.slice(1).map(function (group, i) {
+                return '$' + (i + 1) + '=' + JSON.stringify(group);
+              }).join(' ');
+            }
+            regexResult.textContent = output;
+            return;
+          }
+          const matches = Array.from(text.matchAll(regex));
+          if (matches.length === 0) { regexResult.textContent = '没有匹配项'; return; }
+          const shown = matches.slice(0, 300);
+          let output = '共找到 ' + matches.length + ' 个匹配项:\n';
+          shown.forEach(function (m, i) { output += describeMatch(m, i + 1) + '\n'; });
+          if (matches.length > shown.length) output += '...还有 ' + (matches.length - shown.length) + ' 个匹配项未显示\n';
+          regexResult.textContent = output;
+        } catch (e) {
+          regexResult.textContent = '正则表达式错误: ' + e.message;
+          regexResult.classList.add('error');
+        }
+      });
+
+      // ==================== 文本对比 ====================
+      const diffLeft = document.getElementById('diffLeft');
+      const diffRight = document.getElementById('diffRight');
+      const diffResult = document.getElementById('diffResult');
+
+      // 行级 LCS 差异：插入一行不会再把后面所有行都判定成修改
+      function diffLines(oldText, newText) {
+        const a = oldText.split('\n');
+        const b = newText.split('\n');
+        const ops = [];
+
+        // 先裁掉公共前后缀，显著缩小 DP 规模
+        let start = 0;
+        while (start < a.length && start < b.length && a[start] === b[start]) start++;
+        let endA = a.length - 1;
+        let endB = b.length - 1;
+        while (endA >= start && endB >= start && a[endA] === b[endB]) { endA--; endB--; }
+
+        for (let i = 0; i < start; i++) ops.push({ type: 'same', oldLine: i + 1, newLine: i + 1, text: a[i] });
+
+        const midA = a.slice(start, endA + 1);
+        const midB = b.slice(start, endB + 1);
+        const n = midA.length;
+        const m = midB.length;
+
+        if (n * m > 2000000) {
+          // 超大文本退化为逐行对比，保证页面不卡死
+          const maxLen = Math.max(n, m);
+          for (let i = 0; i < maxLen; i++) {
+            const oldLine = i < n ? midA[i] : undefined;
+            const newLine = i < m ? midB[i] : undefined;
+            if (oldLine === newLine) {
+              ops.push({ type: 'same', oldLine: start + i + 1, newLine: start + i + 1, text: oldLine });
+            } else {
+              if (oldLine !== undefined) ops.push({ type: 'removed', oldLine: start + i + 1, text: oldLine });
+              if (newLine !== undefined) ops.push({ type: 'added', newLine: start + i + 1, text: newLine });
+            }
+          }
+        } else {
+          const dp = [];
+          for (let i = 0; i <= n; i++) dp.push(new Uint32Array(m + 1));
+          for (let i = n - 1; i >= 0; i--) {
+            for (let j = m - 1; j >= 0; j--) {
+              dp[i][j] = midA[i] === midB[j]
+                ? dp[i + 1][j + 1] + 1
+                : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            }
+          }
+          let i = 0;
+          let j = 0;
+          while (i < n && j < m) {
+            if (midA[i] === midB[j]) {
+              ops.push({ type: 'same', oldLine: start + i + 1, newLine: start + j + 1, text: midA[i] });
+              i++;
+              j++;
+            } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+              ops.push({ type: 'removed', oldLine: start + i + 1, text: midA[i] });
+              i++;
+            } else {
+              ops.push({ type: 'added', newLine: start + j + 1, text: midB[j] });
+              j++;
+            }
+          }
+          while (i < n) { ops.push({ type: 'removed', oldLine: start + i + 1, text: midA[i] }); i++; }
+          while (j < m) { ops.push({ type: 'added', newLine: start + j + 1, text: midB[j] }); j++; }
+        }
+
+        for (let k = endA + 1; k < a.length; k++) {
+          ops.push({ type: 'same', oldLine: k + 1, newLine: k - endA + endB + 1, text: a[k] });
+        }
+        return ops;
+      }
+
+      function renderDiff(ops) {
+        const stats = { same: 0, added: 0, removed: 0 };
+        const html = ops.map(function (op) {
+          stats[op.type]++;
+          const lineNo = op.oldLine || op.newLine || '';
+          const prefix = op.type === 'added' ? '+' : op.type === 'removed' ? '-' : ' ';
+          return '<span class="diff-line diff-' + op.type + '">' +
+            '<span class="diff-no">' + lineNo + '</span>' +
+            '<span class="diff-text">' + prefix + ' ' + escapeHtml(op.text) + '</span>' +
+            '</span>';
+        }).join('');
+        return { html: html, stats: stats };
+      }
+
+      document.getElementById('diffBtn').addEventListener('click', () => {
+        const left = diffLeft.value;
+        const right = diffRight.value;
+        diffResult.classList.remove('error');
+        if (left === '' && right === '') {
+          diffResult.textContent = '请输入要对比的文本';
+          diffResult.classList.add('error');
+          return;
+        }
+        const ops = diffLines(left, right);
+        const identical = ops.every(function (op) { return op.type === 'same'; });
+        if (identical) {
+          diffResult.innerHTML = '<span style="color:var(--success);">✓ 两个文本完全一致（共 ' + ops.length + ' 行）</span>';
+          return;
+        }
+        const rendered = renderDiff(ops);
+        diffResult.innerHTML = rendered.html;
+        showToast('新增 ' + rendered.stats.added + ' 行，删除 ' + rendered.stats.removed + ' 行');
+      });
+
+      // ==================== CSS 渐变生成器 ====================
+      const gradColor1 = document.getElementById('gradColor1');
+      const gradColor2 = document.getElementById('gradColor2');
+      const gradDirection = document.getElementById('gradDirection');
+      const gradientPreview = document.getElementById('gradientPreview');
+      const gradientCss = document.getElementById('gradientCss');
+      function updateGradient() {
+        const css = `linear-gradient(${gradDirection.value}, ${gradColor1.value}, ${gradColor2.value})`;
+        gradientPreview.style.background = css;
+        gradientCss.textContent = css;
+      }
+      [gradColor1, gradColor2, gradDirection].forEach(el => el.addEventListener('input', updateGradient));
+      document.getElementById('copyGradientBtn').addEventListener('click', () => copyToClipboard(gradientCss.textContent, 'CSS 渐变'));
+      gradientCss.addEventListener('click', () => copyToClipboard(gradientCss.textContent, 'CSS 渐变'));
+      updateGradient();
+
+      // ==================== 百分比计算 ====================
+      const pctA = document.getElementById('pctA');
+      const pctB = document.getElementById('pctB');
+      function calcPercentage() {
+        const a = parseFloat(pctA.value), b = parseFloat(pctB.value);
+        const out1 = document.getElementById('pctOut1');
+        const out2 = document.getElementById('pctOut2');
+        const out3 = document.getElementById('pctOut3');
+        if (isNaN(a) || isNaN(b)) { out1.textContent = '-'; out2.textContent = '-'; out3.textContent = '-'; return; }
+        out1.textContent = ((a * b) / 100).toFixed(2).replace(/\.?0+$/, '');
+        out2.textContent = b === 0 ? (a === 0 ? '未定义' : '∞') : ((a / b) * 100).toFixed(2) + '%';
+        out3.textContent = a === 0 ? (b === 0 ? '未定义' : '∞') : ((b / a) * 100).toFixed(2) + '%';
+      }
+      document.getElementById('pctCalcBtn').addEventListener('click', calcPercentage);
+      pctA.addEventListener('input', calcPercentage);
+      pctB.addEventListener('input', calcPercentage);
+      calcPercentage();
+
+      // ==================== 专业计算器 ====================
+      const calcMain = document.getElementById('calcMain');
+      const calcExpression = document.getElementById('calcExpression');
+      const memoryIndicator = document.getElementById('memoryIndicator');
+      const historyList = document.getElementById('historyList');
+      const calcKeys = document.getElementById('calcKeys');
+      const calcKeysScientific = document.getElementById('calcKeysScientific');
+      const calcWrapper = document.getElementById('tool-calculator');
+
+      let currentInput = '0';
+      let expression = [];
+      let justEvaluated = false;
+      let awaitingOperand = true;
+      let memory = 0;
+      let history = [];
+      let lastExpressionText = '';
+      const PI = Math.PI;
+      const E = Math.E;
+      const OPERATORS = ['+', '-', '*', '/', '^'];
+      const DISPLAY_OPERATOR = { '*': '×', '/': '÷', '-': '−', '+': '+', '^': '^' };
+
+      function isOperator(token) {
+        return typeof token === 'string' && OPERATORS.indexOf(token) !== -1;
+      }
+
+      function formatNumber(num) {
+        if (typeof num === 'string') return num;
+        if (num !== num) return '错误';
+        if (!isFinite(num)) return num > 0 ? '∞' : '-∞';
+        if (Number.isInteger(num)) return num.toString();
+        return parseFloat(num.toPrecision(12)).toString();
+      }
+
+      function expressionText() {
+        const parts = expression.slice();
+        if (!awaitingOperand || expression.length === 0) parts.push(currentInput);
+        return parts.map(function (token) {
+          return typeof token === 'number' ? formatNumber(token) : (DISPLAY_OPERATOR[token] || token);
+        }).join(' ');
+      }
+
+      function updateDisplay() {
+        calcMain.textContent = currentInput;
+        memoryIndicator.textContent = memory !== 0 ? 'M = ' + formatNumber(memory) : '';
+        if (justEvaluated) {
+          calcExpression.textContent = lastExpressionText;
+          return;
+        }
+        const text = expressionText();
+        calcExpression.textContent = text === currentInput ? '' : text;
+      }
+
+      function inputDigit(digit) {
+        if (currentInput === '错误') {
+          currentInput = '0';
+          expression = [];
+          awaitingOperand = true;
+        }
+        if (justEvaluated) {
+          currentInput = digit === '.' ? '0.' : digit;
+          expression = [];
+          lastExpressionText = '';
+          justEvaluated = false;
+          awaitingOperand = false;
+        } else if (awaitingOperand) {
+          currentInput = digit === '.' ? '0.' : digit;
+          awaitingOperand = false;
+        } else {
+          if (digit === '.' && currentInput.indexOf('.') !== -1) return;
+          if (currentInput.replace(/[^0-9]/g, '').length >= 16) return;
+          if (currentInput === '0') currentInput = digit;
+          else currentInput += digit;
+        }
+        updateDisplay();
+      }
+
+      function inputOperator(op) {
+        if (currentInput === '错误') return;
+        if (justEvaluated) {
+          expression = [parseFloat(currentInput)];
+          lastExpressionText = '';
+          justEvaluated = false;
+          awaitingOperand = true;
+        } else if (!awaitingOperand) {
+          expression.push(parseFloat(currentInput));
+        } else if (expression.length === 0) {
+          return; // 还没有任何数字时，先按运算符不做处理
+        }
+        const last = expression[expression.length - 1];
+        if (isOperator(last)) {
+          expression[expression.length - 1] = op;
+        } else if (last === '(') {
+          return; // 左括号后暂不支持负号
+        } else {
+          expression.push(op);
+        }
+        currentInput = '0';
+        awaitingOperand = true;
+        updateDisplay();
+      }
+
+      function openParen() {
+        if (currentInput === '错误') return;
+        if (justEvaluated) {
+          expression = [];
+          currentInput = '0';
+          lastExpressionText = '';
+          justEvaluated = false;
+          awaitingOperand = true;
+        }
+        if (!awaitingOperand) {
+          expression.push(parseFloat(currentInput));
+          expression.push('*'); // 2(3+4) 按 2×(3+4) 处理
+        } else if (expression[expression.length - 1] === ')') {
+          expression.push('*');
+        }
+        expression.push('(');
+        currentInput = '0';
+        awaitingOperand = true;
+        updateDisplay();
+      }
+
+      function closeParen() {
+        const openCount = expression.filter(function (t) { return t === '('; }).length;
+        const closeCount = expression.filter(function (t) { return t === ')'; }).length;
+        if (openCount <= closeCount) {
+          showToast('没有需要闭合的括号', true);
+          return;
+        }
+        if (!awaitingOperand) expression.push(parseFloat(currentInput));
+        const last = expression[expression.length - 1];
+        if (isOperator(last) || last === '(') {
+          showToast('括号内还缺少数字', true);
+          return;
+        }
+        expression.push(')');
+        currentInput = '0';
+        awaitingOperand = true;
+        updateDisplay();
+      }
+      // 百分比语义：200+10% = 220，200×10% = 20，50% = 0.5
+      function resolvePercentages(tokens) {
+        const out = tokens.slice();
+        for (let i = 0; i < out.length; i++) {
+          if (out[i] !== '%') continue;
+          const value = out[i - 1];
+          if (typeof value !== 'number') {
+            out.splice(i, 1);
+            i--;
+            continue;
+          }
+          const prevOp = out[i - 2];
+          const base = out[i - 3];
+          const replaced = ((prevOp === '+' || prevOp === '-') && typeof base === 'number')
+            ? base * value / 100
+            : value / 100;
+          out.splice(i - 1, 2, replaced);
+          i -= 1;
+        }
+        return out;
+      }
+
+      function evaluateExpression() {
+        if (currentInput === '错误') throw new Error('表达式错误');
+        let tokens = expression.slice();
+        if (!awaitingOperand) tokens.push(parseFloat(currentInput));
+        // 末尾多余的运算符直接忽略（例如 5 + = 视为 5）
+        while (tokens.length && isOperator(tokens[tokens.length - 1])) tokens.pop();
+        if (!tokens.length) return 0;
+        tokens = resolvePercentages(tokens);
+
+        // 允许省略结尾的右括号
+        let open = 0;
+        tokens.forEach(function (t) {
+          if (t === '(') open++;
+          else if (t === ')') open--;
+        });
+        if (open < 0) throw new Error('括号不匹配');
+        for (let i = 0; i < open; i++) tokens.push(')');
+
+        const precedence = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 3 };
+        const output = [];
+        const stack = [];
+        for (const token of tokens) {
+          if (typeof token === 'number') { output.push(token); continue; }
+          if (token === '(') { stack.push(token); continue; }
+          if (token === ')') {
+            while (stack.length && stack[stack.length - 1] !== '(') output.push(stack.pop());
+            if (!stack.length) throw new Error('括号不匹配');
+            stack.pop();
+            continue;
+          }
+          while (stack.length) {
+            const top = stack[stack.length - 1];
+            if (top === '(') break;
+            const higher = precedence[top] > precedence[token];
+            const equalLeftAssoc = precedence[top] === precedence[token] && token !== '^';
+            if (higher || equalLeftAssoc) output.push(stack.pop());
+            else break;
+          }
+          stack.push(token);
+        }
+        while (stack.length) {
+          const rest = stack.pop();
+          if (rest === '(') throw new Error('括号不匹配');
+          output.push(rest);
+        }
+
+        const values = [];
+        for (const token of output) {
+          if (typeof token === 'number') { values.push(token); continue; }
+          const b = values.pop();
+          const a = values.pop();
+          if (a === undefined || b === undefined) throw new Error('表达式不完整');
+          switch (token) {
+            case '+': values.push(a + b); break;
+            case '-': values.push(a - b); break;
+            case '*': values.push(a * b); break;
+            case '/': if (b === 0) throw new Error('除数不能为零'); values.push(a / b); break;
+            case '^': values.push(Math.pow(a, b)); break;
+            default: throw new Error('未知运算符');
+          }
+        }
+        if (values.length !== 1) throw new Error('表达式错误');
+        return values[0];
+      }
+      function applyScientificFunction(funcName) {
+        const num = parseFloat(currentInput);
+        let result;
+        try {
+          switch (funcName) {
+            case 'sin': result = Math.sin(num); break;
+            case 'cos': result = Math.cos(num); break;
+            case 'tan': result = Math.tan(num); break;
+            case 'log': if (num <= 0) throw new Error('参数须大于 0'); result = Math.log10(num); break;
+            case 'ln': if (num <= 0) throw new Error('参数须大于 0'); result = Math.log(num); break;
+            case 'exp': result = Math.exp(num); break;
+            case 'abs': result = Math.abs(num); break;
+            case 'sqrt': if (num < 0) throw new Error('不能对负数开平方'); result = Math.sqrt(num); break;
+            case 'factorial': if (num < 0 || !Number.isInteger(num)) throw new Error('阶乘需要非负整数'); if (num > 170) throw new Error('数值过大'); result = 1; for (let i = 2; i <= num; i++) result *= i; break;
+            case 'power': result = Math.pow(num, 2); break;
+            case 'reciprocal': if (num === 0) throw new Error('不能除以零'); result = 1 / num; break;
+            default: return;
+          }
+          currentInput = formatNumber(result);
+          justEvaluated = false;
+          awaitingOperand = false;
+          lastExpressionText = '';
+          updateDisplay();
+        } catch (e) {
+          currentInput = '错误';
+          lastExpressionText = '';
+          updateDisplay();
+          showToast(e.message || '计算错误', true);
+        }
+      }
+      function addHistory(expr, result) {
+        history.unshift({ expr, result, timestamp: Date.now() });
+        if (history.length > 50) history.pop();
+        renderHistory();
+        try { localStorage.setItem('calc_history', JSON.stringify(history.slice(0, 50))); } catch (e) {}
+      }
+      function renderHistory() {
+        if (history.length === 0) { historyList.innerHTML = '<div class="history-empty">暂无计算记录</div>'; return; }
+        historyList.innerHTML = history.map(function (item, idx) {
+          return '<div class="history-item" data-index="' + idx + '">' +
+            '<div class="h-expr">' + escapeHtml(item.expr) + '</div>' +
+            '<div class="h-result">= ' + escapeHtml(item.result) + '</div>' +
+            '</div>';
+        }).join('');
+        historyList.querySelectorAll('.history-item').forEach(function (el) {
+          el.addEventListener('click', function () {
+            const idx = parseInt(this.dataset.index, 10);
+            if (!isNaN(idx) && history[idx]) {
+              currentInput = history[idx].result;
+              expression = [];
+              justEvaluated = true;
+              awaitingOperand = true;
+              lastExpressionText = history[idx].expr + ' =';
+              updateDisplay();
+            }
+          });
+        });
+      }
+      function handleEquals() {
+        try {
+          const result = evaluateExpression();
+          const resultStr = formatNumber(result);
+          const exprStr = expression.map(function (t) {
+            return typeof t === 'number' ? formatNumber(t) : (DISPLAY_OPERATOR[t] || t);
+          }).join(' ') + (currentInput !== '0' ? ' ' + currentInput : '');
+          lastExpressionText = exprStr + ' =';
+          addHistory(exprStr, resultStr);
+          expression = [];
+          currentInput = resultStr;
+          justEvaluated = true;
+          awaitingOperand = true;
+          updateDisplay();
+        } catch (e) {
+          currentInput = '错误';
+          lastExpressionText = '';
+          awaitingOperand = true;
+          updateDisplay();
+          showToast(e.message || '表达式错误', true);
+        }
+      }
+      function handleButtonAction(action) {
+        switch (action) {
+          case 'clear':
+            currentInput = '0';
+            expression = [];
+            justEvaluated = false;
+            awaitingOperand = true;
+            lastExpressionText = '';
+            updateDisplay();
+            break;
+          case 'backspace':
+            if (awaitingOperand) {
+              // 刚按过运算符：退格删掉这个运算符
+              if (expression.length && isOperator(expression[expression.length - 1])) expression.pop();
+              updateDisplay();
+              break;
+            }
+            if (justEvaluated || currentInput === '错误') {
+              currentInput = '0';
+              justEvaluated = false;
+              awaitingOperand = true;
+              lastExpressionText = '';
+            } else if (currentInput.length > 1) {
+              currentInput = currentInput.slice(0, -1);
+              if (currentInput === '-' || currentInput === '') {
+                currentInput = '0';
+                awaitingOperand = true;
+              }
+            } else {
+              currentInput = '0';
+              awaitingOperand = true;
+            }
+            updateDisplay();
+            break;
+          case 'paren-open': openParen(); break;
+          case 'paren-close': closeParen(); break;
+          case 'percent': inputOperator('%'); break;
+          case 'divide': inputOperator('/'); break;
+          case 'multiply': inputOperator('*'); break;
+          case 'subtract': inputOperator('-'); break;
+          case 'add': inputOperator('+'); break;
+          case 'equals': handleEquals(); break;
+          case 'sqrt': applyScientificFunction('sqrt'); break;
+          case 'power': applyScientificFunction('power'); break;
+          case 'reciprocal': applyScientificFunction('reciprocal'); break;
+          case 'sin': applyScientificFunction('sin'); break;
+          case 'cos': applyScientificFunction('cos'); break;
+          case 'tan': applyScientificFunction('tan'); break;
+          case 'log': applyScientificFunction('log'); break;
+          case 'ln': applyScientificFunction('ln'); break;
+          case 'exp': applyScientificFunction('exp'); break;
+          case 'abs': applyScientificFunction('abs'); break;
+          case 'factorial': applyScientificFunction('factorial'); break;
+          case 'pi': currentInput = formatNumber(PI); justEvaluated = false; lastExpressionText = ''; awaitingOperand = false; updateDisplay(); break;
+          case 'e': currentInput = formatNumber(E); justEvaluated = false; lastExpressionText = ''; awaitingOperand = false; updateDisplay(); break;
+        }
+      }
+      calcKeys.addEventListener('click', e => {
+        const btn = e.target.closest('button'); if (!btn) return;
+        if (btn.dataset.action) handleButtonAction(btn.dataset.action);
+        else if (btn.dataset.val !== undefined) inputDigit(btn.dataset.val);
+      });
+      calcKeysScientific.addEventListener('click', e => {
+        const btn = e.target.closest('button'); if (!btn) return;
+        if (btn.dataset.action) handleButtonAction(btn.dataset.action);
+      });
+      document.getElementById('memClear').addEventListener('click', () => { memory = 0; memoryIndicator.textContent = ''; });
+      document.getElementById('memRecall').addEventListener('click', () => {
+        currentInput = formatNumber(memory);
+        justEvaluated = false;
+        awaitingOperand = false;
+        lastExpressionText = '';
+        updateDisplay();
+      });
+      document.getElementById('memStore').addEventListener('click', () => {
+        memory = parseFloat(currentInput) || 0;
+        memoryIndicator.textContent = memory !== 0 ? 'M = ' + formatNumber(memory) : '';
+      });
+      document.getElementById('memAdd').addEventListener('click', () => {
+        memory += parseFloat(currentInput) || 0;
+        memoryIndicator.textContent = 'M = ' + formatNumber(memory);
+      });
+      document.getElementById('memSub').addEventListener('click', () => {
+        memory -= parseFloat(currentInput) || 0;
+        memoryIndicator.textContent = 'M = ' + formatNumber(memory);
+      });
+      document.getElementById('modeBasic').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('modeScientific').classList.remove('active');
+        calcKeysScientific.style.display = 'none';
+      });
+      document.getElementById('modeScientific').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('modeBasic').classList.remove('active');
+        calcKeysScientific.style.display = 'grid';
+      });
+
+      // 键盘只在计算器区域生效，避免在页面其他位置打字时误改计算结果
+      let calcKeyboardActive = false;
+      document.addEventListener('pointerdown', function (e) {
+        calcKeyboardActive = calcWrapper.contains(e.target);
+      }, true);
+      calcWrapper.addEventListener('focusin', function () { calcKeyboardActive = true; });
+      calcWrapper.addEventListener('focusout', function (e) {
+        if (!calcWrapper.contains(e.relatedTarget)) calcKeyboardActive = false;
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (!calcKeyboardActive) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const target = e.target;
+        const tag = (target.tagName || '').toUpperCase();
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) return;
+        const key = e.key;
+        // 焦点在计算器按钮上时，Enter 交给按钮自身的点击行为
+        if (key === 'Enter' && tag === 'BUTTON' && calcWrapper.contains(target)) return;
+        if (/^[0-9]$/.test(key)) { e.preventDefault(); inputDigit(key); }
+        else if (key === '.' || key === ',') { e.preventDefault(); inputDigit('.'); }
+        else if (key === '+' || key === '-' || key === '*' || key === '/' || key === '^') { e.preventDefault(); inputOperator(key); }
+        else if (key === '%') { e.preventDefault(); inputOperator('%'); }
+        else if (key === '(') { e.preventDefault(); openParen(); }
+        else if (key === ')') { e.preventDefault(); closeParen(); }
+        else if (key === '=' || key === 'Enter') { e.preventDefault(); handleEquals(); }
+        else if (key === 'Escape') { e.preventDefault(); handleButtonAction('clear'); }
+        else if (key === 'Backspace') { e.preventDefault(); handleButtonAction('backspace'); }
+      });
+      document.getElementById('clearHistoryBtn').addEventListener('click', () => { history = []; renderHistory(); try { localStorage.setItem('calc_history', '[]'); } catch (e) {} });
+      try { const saved = localStorage.getItem('calc_history'); if (saved) history = JSON.parse(saved); } catch (e) { history = []; }
+      renderHistory();
+      updateDisplay();
+
+      // ==================== 数学符号 ====================
+      const SYM_DATA = [
+        { name: "常用", items: [
+          ["+", "加号", "+"],
+          ["−", "减号", "-"],
+          ["×", "乘号", "\\times"],
+          ["÷", "除号", "\\div"],
+          ["±", "正负号", "\\pm"],
+          ["∓", "负正号", "\\mp"],
+          ["=", "等号", "="],
+          ["≠", "不等于", "\\neq"],
+          ["≈", "约等于", "\\approx"],
+          ["≡", "恒等于", "\\equiv"],
+          ["<", "小于", "<"],
+          [">", "大于", ">"],
+          ["≤", "小于等于", "\\leq"],
+          ["≥", "大于等于", "\\geq"],
+          ["%", "百分号", "\\%"],
+          ["‰", "千分号", "\\permil"],
+          ["∞", "无穷大", "\\infty"],
+          ["√", "平方根", "\\sqrt{}"],
+          ["∛", "立方根", "\\sqrt[3]{}"],
+          ["∜", "四次方根", "\\sqrt[4]{}"],
+          ["π", "圆周率", "\\pi"],
+          ["°", "度", "^{\\circ}"],
+          ["′", "角分", "'"],
+          ["″", "角秒", "''"],
+          ["·", "点乘", "\\cdot"],
+          ["∗", "星号", "\\ast"],
+          ["∠", "角", "\\angle"],
+          ["⊥", "垂直", "\\perp"],
+          ["∴", "所以", "\\therefore"],
+          ["∵", "因为", "\\because"],
+          ["x²", "x 的平方", "x^{2}"],
+          ["x³", "x 的立方", "x^{3}"],
+          ["xⁿ", "x 的 n 次方", "x^{n}"],
+          ["n!", "阶乘", "n!"],
+          ["1/2", "二分之一", "\\frac{1}{2}"],
+          ["a/b", "分数", "\\frac{a}{b}"]
+        ]},
+        { name: "希腊字母", items: [
+          ["α", "alpha 阿尔法", "\\alpha"],
+          ["β", "beta 贝塔", "\\beta"],
+          ["γ", "gamma 伽马", "\\gamma"],
+          ["δ", "delta 德尔塔", "\\delta"],
+          ["ε", "epsilon 艾普西龙", "\\varepsilon"],
+          ["ζ", "zeta 泽塔", "\\zeta"],
+          ["η", "eta 伊塔", "\\eta"],
+          ["θ", "theta 西塔", "\\theta"],
+          ["ι", "iota 约塔", "\\iota"],
+          ["κ", "kappa 卡帕", "\\kappa"],
+          ["λ", "lambda 兰姆达", "\\lambda"],
+          ["μ", "mu 缪", "\\mu"],
+          ["ν", "nu 纽", "\\nu"],
+          ["ξ", "xi 克西", "\\xi"],
+          ["ο", "omicron 奥密克戎", "o"],
+          ["π", "pi 派", "\\pi"],
+          ["ρ", "rho 柔", "\\rho"],
+          ["σ", "sigma 西格玛", "\\sigma"],
+          ["τ", "tau 陶", "\\tau"],
+          ["υ", "upsilon 宇普西龙", "\\upsilon"],
+          ["φ", "phi 斐", "\\varphi"],
+          ["χ", "chi 卡伊", "\\chi"],
+          ["ψ", "psi 普西", "\\psi"],
+          ["ω", "omega 欧米伽", "\\omega"],
+          ["ς", "final sigma", "\\varsigma"],
+          ["ϵ", "epsilon 变体", "\\epsilon"],
+          ["ϑ", "theta 变体", "\\vartheta"],
+          ["ϖ", "pi 变体", "\\varpi"],
+          ["ϱ", "rho 变体", "\\varrho"],
+          ["ϕ", "phi 变体", "\\phi"],
+          ["Γ", "Gamma 大写", "\\Gamma"],
+          ["Δ", "Delta 大写", "\\Delta"],
+          ["Θ", "Theta 大写", "\\Theta"],
+          ["Λ", "Lambda 大写", "\\Lambda"],
+          ["Ξ", "Xi 大写", "\\Xi"],
+          ["Π", "Pi 大写", "\\Pi"],
+          ["Σ", "Sigma 大写", "\\Sigma"],
+          ["Υ", "Upsilon 大写", "\\Upsilon"],
+          ["Φ", "Phi 大写", "\\Phi"],
+          ["Ψ", "Psi 大写", "\\Psi"],
+          ["Ω", "Omega 大写", "\\Omega"]
+        ]},
+        { name: "运算", items: [
+          ["∘", "复合运算", "\\circ"],
+          ["∙", "点", "\\bullet"],
+          ["⋅", "内积", "\\cdot"],
+          ["⊙", "圆点乘", "\\odot"],
+          ["⊗", "张量积", "\\otimes"],
+          ["⊕", "直和", "\\oplus"],
+          ["⊖", "圆减", "\\ominus"],
+          ["⊘", "圆除", "\\oslash"],
+          ["⊚", "圆环", "\\circledcirc"],
+          ["⊛", "圆星", "\\circledast"],
+          ["⋆", "星号运算", "\\star"],
+          ["∑", "求和", "\\sum"],
+          ["∏", "连乘", "\\prod"],
+          ["∐", "余积", "\\coprod"],
+          ["∫", "积分", "\\int"],
+          ["∬", "二重积分", "\\iint"],
+          ["∭", "三重积分", "\\iiint"],
+          ["∮", "环路积分", "\\oint"],
+          ["∯", "曲面积分", "\\oiint"],
+          ["∰", "体积积分", "\\oiiint"],
+          ["∂", "偏导数", "\\partial"],
+          ["∇", "梯度算子", "\\nabla"],
+          ["∆", "增量", "\\Delta"],
+          ["ℏ", "约化普朗克常数", "\\hbar"],
+          ["ℓ", "手写体 l", "\\ell"],
+          ["ℜ", "实部", "\\Re"],
+          ["ℑ", "虚部", "\\Im"],
+          ["℘", "幂集 / 魏尔斯特拉斯 p", "\\wp"],
+          ["ℵ", "阿列夫数", "\\aleph"],
+          ["¬", "逻辑非", "\\neg"],
+          ["⨁", "大直和", "\\bigoplus"],
+          ["⨂", "大张量积", "\\bigotimes"],
+          ["⨀", "大圆点乘", "\\bigodot"],
+          ["⨄", "大并（带加号）", "\\biguplus"],
+          ["⨆", "大方并", "\\bigsqcup"],
+          ["⨉", "向量积", "\\times"],
+          ["⌐", "取反符号", "\\neg"],
+          ["№", "编号", "\\text{No.}"]
+        ]},
+        { name: "关系", items: [
+          ["=", "等号", "="],
+          ["≠", "不等号", "\\neq"],
+          ["≈", "约等于", "\\approx"],
+          ["≡", "恒等于", "\\equiv"],
+          ["≢", "不恒等于", "\\not\\equiv"],
+          ["∼", "相似", "\\sim"],
+          ["≁", "不相似", "\\nsim"],
+          ["≃", "渐近等于", "\\simeq"],
+          ["≅", "全等于", "\\cong"],
+          ["≐", "定义为", "\\doteq"],
+          ["≑", "doteqdot", "\\doteqdot"],
+          ["≒", "约等于（日文）", "\\fallingdotseq"],
+          ["≓", "risingdotseq", "\\risingdotseq"],
+          ["≦", "小于等于（变体）", "\\leqq"],
+          ["≧", "大于等于（变体）", "\\geqq"],
+          ["≪", "远小于", "\\ll"],
+          ["≫", "远大于", "\\gg"],
+          ["≮", "不小于", "\\nless"],
+          ["≯", "不大于", "\\ngtr"],
+          ["≰", "不≤", "\\nleq"],
+          ["≱", "不≥", "\\ngeq"],
+          ["≺", "先于", "\\prec"],
+          ["≻", "后于", "\\succ"],
+          ["≼", "preccurlyeq", "\\preccurlyeq"],
+          ["≽", "succcurlyeq", "\\succcurlyeq"],
+          ["∝", "正比于", "\\propto"],
+          ["≔", "定义为", "\\coloneqq"],
+          ["≕", "eqqcolon", "\\eqqcolon"],
+          ["≟", "是否相等", "\\stackrel{?}{=}"],
+          ["⋘", "三个远小于", "\\lll"],
+          ["⋙", "三个远大于", "\\ggg"],
+          ["∽", "反相似", "\\backsim"]
+        ]},
+        { name: "集合与逻辑", items: [
+          ["∈", "属于", "\\in"],
+          ["∉", "不属于", "\\notin"],
+          ["∋", "包含该元素", "\\ni"],
+          ["∌", "不包含该元素", "\\notni"],
+          ["⊂", "真包含于", "\\subset"],
+          ["⊃", "真包含", "\\supset"],
+          ["⊆", "包含于", "\\subseteq"],
+          ["⊇", "包含", "\\supseteq"],
+          ["⊄", "不包含于", "\\nsubseteq"],
+          ["⊅", "不包含", "\\nsupseteq"],
+          ["⊈", "不是子集", "\\nsubseteq"],
+          ["⊉", "不是超集", "\\nsupseteq"],
+          ["⊊", "真子集", "\\subsetneq"],
+          ["⊋", "真超集", "\\supsetneq"],
+          ["∩", "交集", "\\cap"],
+          ["∪", "并集", "\\cup"],
+          ["∖", "差集", "\\setminus"],
+          ["∅", "空集", "\\emptyset"],
+          ["∀", "任意 / 全部", "\\forall"],
+          ["∃", "存在", "\\exists"],
+          ["∄", "不存在", "\\nexists"],
+          ["∧", "逻辑与", "\\wedge"],
+          ["∨", "逻辑或", "\\vee"],
+          ["⊻", "异或", "\\veebar"],
+          ["⊼", "与非", "\\barwedge"],
+          ["⊽", "或非", "\\barvee"],
+          ["⊤", "真", "\\top"],
+          ["⊥", "假 / 垂直", "\\bot"],
+          ["⊢", "推出", "\\vdash"],
+          ["⊣", "dashv", "\\dashv"],
+          ["⊨", "蕴含", "\\models"],
+          ["⊭", "不蕴含", "\\not\\models"],
+          ["⋂", "大交集", "\\bigcap"],
+          ["⋃", "大并集", "\\bigcup"],
+          ["⋀", "大逻辑与", "\\bigwedge"],
+          ["⋁", "大逻辑或", "\\bigvee"],
+          ["≜", "定义为", "\\triangleq"]
+        ]},
+        { name: "箭头", items: [
+          ["←", "左箭头", "\\leftarrow"],
+          ["→", "右箭头", "\\rightarrow"],
+          ["↑", "上箭头", "\\uparrow"],
+          ["↓", "下箭头", "\\downarrow"],
+          ["↔", "双向箭头", "\\leftrightarrow"],
+          ["↕", "上下箭头", "\\updownarrow"],
+          ["⇐", "左推导", "\\Leftarrow"],
+          ["⇒", "右推导", "\\Rightarrow"],
+          ["⇑", "上推导", "\\Uparrow"],
+          ["⇓", "下推导", "\\Downarrow"],
+          ["⇔", "等价", "\\Leftrightarrow"],
+          ["⇕", "上下推导", "\\Updownarrow"],
+          ["⟵", "长左箭头", "\\longleftarrow"],
+          ["⟶", "长右箭头", "\\longrightarrow"],
+          ["⟷", "长双向箭头", "\\longleftrightarrow"],
+          ["⟹", "长右推导", "\\Longrightarrow"],
+          ["⟺", "长等价", "\\Longleftrightarrow"],
+          ["⟸", "长左推导", "\\Longleftarrow"],
+          ["↦", "映射到", "\\mapsto"],
+          ["↤", "mapsfrom", "\\mapsfrom"],
+          ["↪", "嵌入箭头", "\\hookrightarrow"],
+          ["↩", "hookleftarrow", "\\hookleftarrow"],
+          ["⇀", "右半箭头", "\\rightharpoonup"],
+          ["⇁", "rightharpoondown", "\\rightharpoondown"],
+          ["⇌", "可逆箭头", "\\rightleftharpoons"],
+          ["⇋", "leftrightharpoons", "\\leftrightharpoons"],
+          ["⇄", "rightleftarrows", "\\rightleftarrows"],
+          ["⇆", "leftrightarrows", "\\leftrightarrows"],
+          ["↺", "逆时针", "\\circlearrowleft"],
+          ["↻", "顺时针", "\\circlearrowright"],
+          ["↖", "左上箭头", "\\nwarrow"],
+          ["↗", "右上箭头", "\\nearrow"],
+          ["↘", "右下箭头", "\\searrow"],
+          ["↙", "左下箭头", "\\swarrow"],
+          ["⇝", "波浪右箭头", "\\rightsquigarrow"],
+          ["⇠", "虚线左箭头", "\\dashleftarrow"]
+        ]},
+        { name: "上下标", items: [
+          ["⁰", "上标 0", "^{0}"],
+          ["¹", "上标 1", "^{1}"],
+          ["²", "上标 2", "^{2}"],
+          ["³", "上标 3", "^{3}"],
+          ["⁴", "上标 4", "^{4}"],
+          ["⁵", "上标 5", "^{5}"],
+          ["⁶", "上标 6", "^{6}"],
+          ["⁷", "上标 7", "^{7}"],
+          ["⁸", "上标 8", "^{8}"],
+          ["⁹", "上标 9", "^{9}"],
+          ["⁺", "上标加", "^{+}"],
+          ["⁻", "上标减", "^{-}"],
+          ["⁼", "上标等号", "^{=}"],
+          ["⁽", "上标左括号", "^{(}"],
+          ["⁾", "上标右括号", "^{)}"],
+          ["ⁿ", "上标 n", "^{n}"],
+          ["ⁱ", "上标 i", "^{i}"],
+          ["ˣ", "上标 x", "^{x}"],
+          ["₀", "下标 0", "_{0}"],
+          ["₁", "下标 1", "_{1}"],
+          ["₂", "下标 2", "_{2}"],
+          ["₃", "下标 3", "_{3}"],
+          ["₄", "下标 4", "_{4}"],
+          ["₅", "下标 5", "_{5}"],
+          ["₆", "下标 6", "_{6}"],
+          ["₇", "下标 7", "_{7}"],
+          ["₈", "下标 8", "_{8}"],
+          ["₉", "下标 9", "_{9}"],
+          ["₊", "下标加", "_{+}"],
+          ["₋", "下标减", "_{-}"],
+          ["₌", "下标等号", "_{=}"],
+          ["₍", "下标左括号", "_{("],
+          ["₎", "下标右括号", "_{)}"],
+          ["ₐ", "下标 a", "_{a}"],
+          ["ₑ", "下标 e", "_{e}"],
+          ["ₒ", "下标 o", "_{o}"],
+          ["ₓ", "下标 x", "_{x}"],
+          ["ₕ", "下标 h", "_{h}"],
+          ["ₖ", "下标 k", "_{k}"],
+          ["ₗ", "下标 l", "_{l}"],
+          ["ₘ", "下标 m", "_{m}"],
+          ["ₙ", "下标 n", "_{n}"],
+          ["ₚ", "下标 p", "_{p}"],
+          ["ₛ", "下标 s", "_{s}"],
+          ["ₜ", "下标 t", "_{t}"]
+        ]},
+        { name: "几何", items: [
+          ["∠", "角", "\\angle"],
+          ["∡", "有向角", "\\measuredangle"],
+          ["∢", "球面角", "\\sphericalangle"],
+          ["⊥", "垂直", "\\perp"],
+          ["∥", "平行", "\\parallel"],
+          ["∦", "不平行", "\\nparallel"],
+          ["△", "三角形", "\\triangle"],
+          ["▽", "倒三角", "\\triangledown"],
+          ["○", "圆", "\\bigcirc"],
+          ["●", "实心圆", "\\bullet"],
+          ["□", "正方形", "\\square"],
+          ["■", "实心方块", "\\blacksquare"],
+          ["◇", "菱形", "\\diamond"],
+          ["◆", "实心菱形", "\\blacklozenge"],
+          ["⌒", "弧", "\\frown"],
+          ["⌓", "弧线段", "\\overset{\\frown}{}"],
+          ["⊾", "直角", "\\rightangle"],
+          ["⌀", "直径", "\\diameter"],
+          ["◯", "空心圆", "\\bigcirc"],
+          ["≌", "全等", "\\cong"]
+        ]},
+        { name: "括号与杂项", items: [
+          ["(", "左圆括号", "("],
+          [")", "右圆括号", ")"],
+          ["[", "左方括号", "["],
+          ["]", "右方括号", "]"],
+          ["{", "左花括号", "\\{"],
+          ["}", "右花括号", "\\}"],
+          ["⟨", "左尖括号", "\\langle"],
+          ["⟩", "右尖括号", "\\rangle"],
+          ["⟦", "左双方括号", "\\llbracket"],
+          ["⟧", "右双方括号", "\\rrbracket"],
+          ["‖", "范数双竖线", "\\|"],
+          ["⌈", "向上取整（左）", "\\lceil"],
+          ["⌉", "向上取整（右）", "\\rceil"],
+          ["⌊", "向下取整（左）", "\\lfloor"],
+          ["⌋", "向下取整（右）", "\\rfloor"],
+          ["…", "省略号", "\\dots"],
+          ["⋯", "居中省略号", "\\cdots"],
+          ["⋮", "纵向省略号", "\\vdots"],
+          ["⋱", "斜向省略号", "\\ddots"],
+          ["†", "剑号", "\\dagger"],
+          ["‡", "双剑号", "\\ddagger"],
+          ["§", "节号", "\\S"],
+          ["¶", "段落号", "\\P"],
+          ["℃", "摄氏度", "^{\\circ}C"],
+          ["℉", "华氏度", "^{\\circ}F"],
+          ["✓", "对勾", "\\checkmark"],
+          ["‰", "千分号", "\\permil"],
+          ["%", "百分号", "\\%"]
+        ]}
+      ];
+
+      const symGrid = document.getElementById("symGrid");
+      const symTabs = document.getElementById("symTabs");
+      const symSearch = document.getElementById("symSearch");
+      const symCompose = document.getElementById("symCompose");
+      const symHint = document.getElementById("symHint");
+      let symActiveCat = SYM_DATA[0].name;
+      let symMode = "char";
+
+      function symEsc(str) {
+        return String(str).replace(/[&<>"]/g, function(c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+
+      function symRenderTabs() {
+        symTabs.innerHTML = SYM_DATA.map(function(cat) {
+          const active = cat.name === symActiveCat ? " active" : "";
+          return '<button type="button" data-cat="' + symEsc(cat.name) + '" class="' + active.trim() + '">' + symEsc(cat.name) + "</button>";
+        }).join("");
+      }
+
+      function symCurrentItems() {
+        const q = symSearch.value.trim().toLowerCase();
+        if (q) {
+          const hits = [];
+          SYM_DATA.forEach(function(cat) {
+            cat.items.forEach(function(it) {
+              const hay = (it[0] + " " + it[1] + " " + it[2] + " " + cat.name).toLowerCase();
+              if (hay.indexOf(q) !== -1) hits.push(it);
+            });
+          });
+          return { items: hits, searching: true };
+        }
+        const cat = SYM_DATA.find(function(c) { return c.name === symActiveCat; }) || SYM_DATA[0];
+        return { items: cat.items, searching: false };
+      }
+
+      function symRender() {
+        const res = symCurrentItems();
+        if (!res.items.length) {
+          symGrid.innerHTML = '<div class="sym-empty">没有匹配的符号，换个关键词试试（支持中文名 / 英文名 / LaTeX）</div>';
+          return;
+        }
+        symGrid.innerHTML = res.items.map(function(it) {
+          const title = it[1] + (it[2] ? " · " + it[2] : "");
+          return '<button type="button" class="sym-btn" data-char="' + symEsc(it[0]) +
+            '" data-latex="' + symEsc(it[2]) + '" data-name="' + symEsc(it[1]) +
+            '" title="' + symEsc(title) + '">' + symEsc(it[0]) + "</button>";
+        }).join("");
+      }
+
+      function symAppend(text) {
+        const cur = symCompose.value;
+        if (symMode === "latex") {
+          symCompose.value = cur + (cur && !/\s$/.test(cur) ? " " : "") + text;
+        } else {
+          symCompose.value = cur + text;
+        }
+        symCompose.scrollTop = symCompose.scrollHeight;
+      }
+
+      symGrid.addEventListener("click", function(e) {
+        const btn = e.target.closest(".sym-btn");
+        if (!btn) return;
+        const char = btn.dataset.char;
+        const latex = btn.dataset.latex;
+        const name = btn.dataset.name || "";
+        const text = symMode === "latex" ? latex : char;
+        if (!text) {
+          showToast("这个符号暂无 LaTeX 写法，可切换到「复制符号」", true);
+          return;
+        }
+        writeClipboard(text)
+          .then(function() { showToast("已复制 " + text); })
+          .catch(function() { showToast("复制失败，请手动选择拼接区内容复制", true); });        btn.classList.add("copied");
+        setTimeout(function() { btn.classList.remove("copied"); }, 480);
+        symAppend(text);
+        const cp = "U+" + char.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
+        symHint.innerHTML = "已复制 <strong>" + symEsc(char) + "</strong> · " + cp +
+          " · " + symEsc(name) + (latex ? ' · LaTeX: <code>' + symEsc(latex) + "</code>" : "");
+      });
+
+      symTabs.addEventListener("click", function(e) {
+        const btn = e.target.closest("button[data-cat]");
+        if (!btn) return;
+        symActiveCat = btn.dataset.cat;
+        symSearch.value = "";
+        symRenderTabs();
+        symRender();
+      });
+
+      symSearch.addEventListener("input", function() {
+        symRender();
+        const q = symSearch.value.trim();
+        symTabs.querySelectorAll("button").forEach(function(b) {
+          b.classList.toggle("active", !q && b.dataset.cat === symActiveCat);
+        });
+      });
+
+      document.getElementById("symMode").addEventListener("click", function(e) {
+        const btn = e.target.closest("button[data-mode]");
+        if (!btn) return;
+        symMode = btn.dataset.mode;
+        this.querySelectorAll("button").forEach(function(b) {
+          b.classList.toggle("active", b === btn);
+        });
+        showToast(symMode === "latex" ? "已切换：点击复制 LaTeX 代码" : "已切换：点击复制符号本身");
+      });
+
+      document.getElementById("symCopyAllBtn").addEventListener("click", function() {
+        const val = symCompose.value.trim();
+        if (!val) { showToast("拼接区还是空的，先点几个符号吧", true); return; }
+        copyToClipboard(val, "拼接内容");
+      });
+
+      document.getElementById("symBackspaceBtn").addEventListener("click", function() {
+        const arr = Array.from(symCompose.value);
+        if (!arr.length) return;
+        arr.pop();
+        symCompose.value = arr.join("").replace(/\s+$/, "");
+        symCompose.focus();
+      });
+
+      document.getElementById("symClearBtn").addEventListener("click", function() {
+        symCompose.value = "";
+        symHint.textContent = "已清空拼接区";
+        symCompose.focus();
+      });
+
+      symRenderTabs();
+      symRender();
+
+      // ==================== 平滑滚动 ====================
+      document.querySelectorAll('.nav-links a, .footer-links a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
